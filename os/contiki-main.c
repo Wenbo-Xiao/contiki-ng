@@ -56,6 +56,8 @@
 #include "services/shell/serial-shell.h"
 #include "services/simple-energest/simple-energest.h"
 #include "services/tsch-cs/tsch-cs.h"
+#include "services/jamsense/specksense.h"
+
 
 #include <stdio.h>
 #include <stdint.h>
@@ -166,6 +168,10 @@ main(void)
   /* Initialize the channel selection module */
   tsch_cs_adaptations_init();
 #endif /* BUILD_WITH_TSCH_CS */
+
+#if BUILD_WITH_JAMSENSE
+  specksense_init();
+#endif /* BUILD_WITH_TSCH_JAMSENSE */
 
   autostart_start(autostart_processes);
 
