@@ -362,66 +362,6 @@ void init_power_levels()
 #error "Power levels should be one of the following values: 2, 4, 8, 16 or 120"
 #endif
 }
-
-
-// /*---------------------------------------------------------------------------*/
-// bool specksense_process(void)
-// {
-// 	//    static struct etimer et;
-// 	static int count, loop=0;
-// 	int suspicion_count;
-
-// 	NETSTACK_MAC.off();
-// 	NETSTACK_RADIO.on();
-
-// 	if (NETSTACK_RADIO.set_value(RADIO_PARAM_CHANNEL, RADIO_CHANNEL) != RADIO_RESULT_OK)
-// 	{
-// 		printf("ERROR: failed to change radio channel\n");
-// 		return false;
-// 	}
-// 	record.sequence_num = 0;
-// 	/*
-// 		They need to have the same format after the RSSI sampler in order to be as one process
-// 	*/
-
-// 	// printf("J_D: %d RSSI_SIZE:%d POWER_LEVELS: %d \n", J_D, RSSI_SIZE, POWER_LEVELS);
-// 	if (J_D)
-// 	{	
-// 		for(count = 1;count <= INTERFERENCE_NUMBER_SAMPLES * 2;count++){
-// 		leds_single_on(LEDS_LED1);
-// 		printf("1---------------------------------------------------------------------------\n");
-// 		rssi_sampler(TIME_WINDOW);
-// 		if (0)
-// 		{
-// 			print_rssi_rle();
-// 		}
-// 		printf("2---------------------------------------------------------------------------\n");
-// 		n_clusters = kmeans(&record, rle_ptr);
-// 		printf("3---------------------------------------------------------------------------\n");
-// 		suspicion_count = check_similarity(/*PROFILING*/ 0);
-// 		printf("4---------------------------------------------------------------------------\n");
-// 		printf("Number of cluster %d\n", n_clusters);
-// 		leds_single_off(LEDS_LED1);
-// 		//printf("Number of count %d\n", count);
-// 		loop++;
-// 		printf("Number of loop %d\n", loop);
-// 		if (suspicion_count >= 5){
-// 			return true;
-// 			break;
-// 		}
-// 		}			
-// 	}
-// 	else if (J_D != 1)
-// 	{
-// 		rssi_sampler_old(TIME_WINDOW);
-// 		n_clusters = kmeans_old(&record, rle_ptr);
-// 		// print_rssi_rle();
-// 		check_unintentional_interference(n_clusters);
-// 		// print_interarrival(RADIO_CHANNEL, n_clusters);
-// 	}		
-// 	return false;
-
-// }
 /*---------------------------------------------------------------------------*/
 static void
 set_channel(void)
@@ -442,22 +382,29 @@ run_transmit(void)
 	packet_cnt++;
 }
 /*---------------------------------------------------------------------------*/
-bool jammer_trigger_process(void)
+PROCESS(jammer_trigger_process, "jammer trigger process");
+PROCESS_THREAD(jammer_trigger_process, ev, data)
 {
-	int counter_loop = 0;
+	static struct etimer et,et_period;
+	PROCESS_BEGIN();
 	set_channel();
-	printf("%d netstack_mac_off\n", NETSTACK_MAC.off());
-	printf("%d netstack_radio_on\n", NETSTACK_RADIO.on());
-	
+	NETSTACK_MAC.off();
+	NETSTACK_RADIO.on();
+	//frequncy to send jammer trigger msg
+	etimer_set(&et, CLOCK_SECOND * 0.1);
+	//period to send msg
+	etimer_set(&et_period, CLOCK_SECOND * 2);
 
-	while (counter_loop < 20){
+	while (1){
+		PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
+		etimer_reset(&et);
 		run_transmit();
-		counter_loop++;
-		
+		if(etimer_expired(&et_period)){
+			break;
+		}
+		PROCESS_PAUSE();
 	}
-	
-	return true;
-
+	PROCESS_END();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -479,52 +426,55 @@ PROCESS_THREAD(specksense_process, ev, data)
 		printf("ERROR: failed to change radio channel, JamSense ends\n");
 	}
 
-	while (1)
-	{
-		PROCESS_YIELD_UNTIL(ev == button_hal_press_event);
-		record.sequence_num = 0;
-		/*
-			They need to have the same format after the RSSI sampler in order to be as one process
-		*/
+	record.sequence_num = 0;
+	/*
+		They need to have the same format after the RSSI sampler in order to be as one process
+	*/
 
-		// printf("J_D: %d RSSI_SIZE:%d POWER_LEVELS: %d \n", J_D, RSSI_SIZE, POWER_LEVELS);
-		if (J_D)
-		{	
-			for(count = 1;count <= INTERFERENCE_NUMBER_SAMPLES * 2;count++){
-			leds_single_on(LEDS_LED1);
-			rssi_sampler(TIME_WINDOW);
-			if (0)
-			{
-				print_rssi_rle();
-			}
-			n_clusters = kmeans(&record, rle_ptr);
-			suspicion_count = check_similarity(/*PROFILING*/ 0);
-			printf("Number of cluster %d\n", n_clusters);
-			leds_single_off(LEDS_LED1);
-			loop++;
-			printf("Number of loop %d\n", loop);
-			if (suspicion_count >= 5)
-			{
-				break;
-			}
-			}			
-		}
-		else if (J_D != 1)
+	// printf("J_D: %d RSSI_SIZE:%d POWER_LEVELS: %d \n", J_D, RSSI_SIZE, POWER_LEVELS);
+	if (J_D)
+	{	
+		for(count = 1;count <= INTERFERENCE_NUMBER_SAMPLES * 2;count++){
+		leds_single_on(LEDS_LED1);
+		rssi_sampler(TIME_WINDOW);
+		if (0)
 		{
-			rssi_sampler_old(TIME_WINDOW);
-			n_clusters = kmeans_old(&record, rle_ptr);
-			// print_rssi_rle();
-			check_unintentional_interference(n_clusters);
-			// print_interarrival(RADIO_CHANNEL, n_clusters);
+			print_rssi_rle();
 		}
-		PROCESS_PAUSE();
-		
+		n_clusters = kmeans(&record, rle_ptr);
+		suspicion_count = check_similarity(/*PROFILING*/ 0);
+		printf("Number of cluster %d\n", n_clusters);
+		leds_single_off(LEDS_LED1);
+		loop++;
+		printf("Number of loop %d\n", loop);
+		if (suspicion_count >= 5)
+		{
+			break;
+		}
+		}			
 	}
+	else if (J_D != 1)
+	{
+		rssi_sampler_old(TIME_WINDOW);
+		n_clusters = kmeans_old(&record, rle_ptr);
+		// print_rssi_rle();
+		check_unintentional_interference(n_clusters);
+		// print_interarrival(RADIO_CHANNEL, n_clusters);
+	}
+
+		
+	
 	PROCESS_END();
 }
 /*---------------------------------------------------------------------------*/
-void specksense_init(void)
+void specksense_run(void)
 {
   process_start(&specksense_process, NULL);
 }
+/*---------------------------------------------------------------------------*/
+void jammer_trigger_run(void)
+{
+  process_start(&jammer_trigger_process, NULL);
+}
+
 

@@ -38,8 +38,9 @@
  */
 
 #include "contiki.h"
-
+#include "dev/button-hal.h"
 #include <stdio.h> /* For printf() */
+#include "specksense.h"
 /*---------------------------------------------------------------------------*/
 PROCESS(hello_world_process, "Hello world process");
 AUTOSTART_PROCESSES(&hello_world_process);
@@ -57,8 +58,9 @@ PROCESS_THREAD(hello_world_process, ev, data)
     printf("Hello, world\n");
 
     /* Wait for the periodic timer to expire and then restart the timer. */
-    PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
-    etimer_reset(&timer);
+    PROCESS_WAIT_EVENT_UNTIL(ev == button_hal_press_event);
+    specksense_run();
+
   }
 
   PROCESS_END();

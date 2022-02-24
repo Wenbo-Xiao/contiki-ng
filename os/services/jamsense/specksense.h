@@ -50,11 +50,14 @@ void init_power_levels(void);
 void rssi_sampler(int time_window_ms);
 
 /**
- * \brief Initializes specksense module
+ * \brief Runs specksense module
  */
-void specksense_init(void);
+void specksense_run(void);
 
-bool jammer_trigger_process(void);
+/**
+ * \brief Runs jammer trigger module
+ */
+void jammer_trigger_run(void);
 
 
 #endif /* __TSCH_CS_H__ */

@@ -56,7 +56,7 @@
 #include "services/shell/serial-shell.h"
 #include "services/simple-energest/simple-energest.h"
 #include "services/tsch-cs/tsch-cs.h"
-#include "services/jamsense/specksense.h"
+//#include "services/jamsense/specksense.h"
 
 
 #include <stdio.h>
@@ -169,9 +169,9 @@ main(void)
   tsch_cs_adaptations_init();
 #endif /* BUILD_WITH_TSCH_CS */
 
-#if BUILD_WITH_JAMSENSE
-  specksense_init();
-#endif /* BUILD_WITH_TSCH_JAMSENSE */
+/* #if BUILD_WITH_JAMSENSE
+  //specksense_init();
+#endif BUILD_WITH_TSCH_JAMSENSE */
 
   autostart_start(autostart_processes);
 
