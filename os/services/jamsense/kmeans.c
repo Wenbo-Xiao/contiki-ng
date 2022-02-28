@@ -182,8 +182,12 @@ int check_similarity(int profiling)
 
     // accuracy_amount_of_times++;
     /*Sort the size after highest duration (Bubblesort)*/
-    bubble_sort(clusters, prev_num_clusters_final, 1); /*Sort after size*/
-    bubble_sort(clusters, prev_num_clusters_final, 0); /*Acutally better to sort after power level*/
+    if(0)
+    {
+        bubble_sort(clusters, prev_num_clusters_final, 1); /*Sort after size*/
+        bubble_sort(clusters, prev_num_clusters_final, 0); /*Acutally better to sort after power level*/
+    }
+    
 
     if (profiling)
     {
@@ -195,14 +199,14 @@ int check_similarity(int profiling)
         /*Debug*/
         if (1)
         {
-            if (clusters[i].plevel >= 6)
+            //if (clusters[i].plevel >= 6)
             {
                  printf("cluster %d : vector_duration: %d :", i, clusters[i].vector_duration);
                  printf("plevel: ");
                  printf("%d ", clusters[i].plevel);
                  printf("num_vectors: %d\n", num_vectors);
             }
-            else
+            //else
             {
                 // printf("cluster %d : vector_duration: %d : plevel: %d num_vectors: %d\n", i, clusters[i].vector_duration, clusters[i].plevel, num_vectors);
             }
@@ -341,18 +345,28 @@ int kmeans(struct record *record, int rle_ptr)
     if (rle_ptr == RUN_LENGTH)
         rle_ptr--;
 
-    /*Copy pointer value to X array*/
-    for (int i = 0; i < RUN_LENGTH; i++)
+    /*Copy pointer value to X array, discard element that POWER_LEVEL below THRESHOLD to improve perfomance*/
+    int i = 0;
+    while(i < RUN_LENGTH)
     {
-        X[i][0] = record->rssi_rle[i][1];
-        X[i][1] = record->rssi_rle[i][0];
+        if(record->rssi_rle[i][0] > INTERFERENCE_POWER_LEVEL_THRESHOLD)
+        {
+            X[num_vectors][0] = record->rssi_rle[i][1];
+            X[num_vectors][1] = record->rssi_rle[i][0];
+            num_vectors++;
+        }
+            i++;       
     }
 
-    num_vectors = RUN_LENGTH;
 
     cluster_test = 1;
     while ((cluster_test < 11) && (diffcost_between_clusters > stop_threshold))
     {
+        //skip kmeans if no element has POWER_LEVEL exceed THRESHOLD
+        if (num_vectors == 0)
+        {
+            break;
+        }
         cost_runs = 65535;
         nruns = 0;
         cluster_test++;
@@ -399,7 +413,7 @@ int kmeans(struct record *record, int rle_ptr)
                 K[0][1] = X[cluster_pref][1];
                 for (i = 1; i < cluster_test; i++)
                 {
-                    idx = random_rand() % (RUN_LENGTH); // num_vectors;
+                    idx = random_rand() % (num_vectors); // num_vectors;
                     K[i][0] = X[idx][0];
                     K[i][1] = X[idx][1];
                 }
@@ -409,7 +423,7 @@ int kmeans(struct record *record, int rle_ptr)
 
                 for (i = 0; i < cluster_test; i++)
                 {
-                    idx = random_rand() % (RUN_LENGTH); // num_vectors;
+                    idx = random_rand() % (num_vectors); // num_vectors;
                     K[i][0] = X[idx][0];
                     K[i][1] = X[idx][1];
                 }
@@ -519,7 +533,7 @@ int kmeans(struct record *record, int rle_ptr)
                 {
 
                     /*Increase the K if the powerlevel or duration doesn't equal 32767*/
-                    if (K[i][0] != 0x7FFF && K[i][1] != 0x7FFF)
+                    if ((K[i][0] != 0x7FFF && K[i][1] != 0x7FFF) && (K[i][0] != 0x0001 && K[i][1] != 0x0001))
                     {
                         K_final[num_clusters_final][0] = K[i][0];
                         K_final[num_clusters_final][1] = K[i][1];

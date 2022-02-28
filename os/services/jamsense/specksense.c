@@ -88,7 +88,7 @@ static void print_rssi_rle()
 void rssi_sampler(int time_window_ms)
 {
 	// sample_st = RTIMER_NOW();
-	max_samples = time_window_ms * 20;
+	max_samples = time_window_ms * 20;//max_samples not used
 	step_count = 1;
 	rle_ptr = -1;
 	record.sequence_num = 0;
@@ -109,7 +109,6 @@ void rssi_sampler(int time_window_ms)
 	rle_ptr = -1;
 	record.rssi_rle[0][1] = 0;
 	record.rssi_rle[0][0] = 0;
-	n_samples = max_samples * 10;
 	//   watchdog_stop();
 	print_counter = 0;
 	int times = 0;
@@ -138,7 +137,6 @@ void rssi_sampler(int time_window_ms)
 		/*Power level most be higher than one */
 		if (rssi_levels[-debug_rssi - 1] > 1)
 		{
-			n_samples = n_samples - 1;
 			cond = 0x01 & ((record.rssi_rle[rle_ptr][0] != rssi_levels[-rssi_val - 1]) | (record.rssi_rle[rle_ptr][1] == 32767));
 
 			/*Max_duration achieved, move to next value*/
@@ -161,18 +159,19 @@ void rssi_sampler(int time_window_ms)
 			/*Create 2D vector*/
 			record.rssi_rle[rle_ptr][0] = rssi_levels[rssi_val_mod];
 			record.rssi_rle[rle_ptr][1] = (record.rssi_rle[rle_ptr][1]) * (1 - cond) + 1;
+			//printf(" rle_ptr: %d  level: %d  duratuion: %d \n",rle_ptr,record.rssi_rle[rle_ptr][0],	record.rssi_rle[rle_ptr][1]);
 		}
 		else
 		{ /*I think a problem might be that it loops here without printing anything for a very long amount of time. */
-			if (rle_ptr == 498){}
+			// if (rle_ptr == 498){}
 		}
 	}
 	printf("This is how many times the loop looped: %d \n", times);
 	watchdog_start();
 
 	// sample_end = RTIMER_NOW();
-	if (rle_ptr < RUN_LENGTH)
-		rle_ptr++;
+	// if (rle_ptr < RUN_LENGTH)
+	// 	rle_ptr++;
 
 	printf("\nNumber of sampels %d : rle_ptr %d\n", globalCounter, rle_ptr);
 	printf(" \n");
@@ -414,12 +413,12 @@ PROCESS_THREAD(specksense_process, ev, data)
 	//    static struct etimer et;
 	static int count, loop=0;
 	int suspicion_count;
+	static rtimer_clock_t start;
 	PROCESS_BEGIN();
 	NETSTACK_MAC.off();
 	NETSTACK_RADIO.on();
 
 	watchdog_start();
-	init_power_levels(); // Populate the rssi quantization levels.
 
 	if (NETSTACK_RADIO.set_value(RADIO_PARAM_CHANNEL, RADIO_CHANNEL) != RADIO_RESULT_OK)
 	{
@@ -435,14 +434,24 @@ PROCESS_THREAD(specksense_process, ev, data)
 	if (J_D)
 	{	
 		for(count = 1;count <= INTERFERENCE_NUMBER_SAMPLES * 2;count++){
+		
 		leds_single_on(LEDS_LED1);
+		start = RTIMER_NOW();
 		rssi_sampler(TIME_WINDOW);
+		printf("rssi_sampler time %lu \n",RTIMER_NOW() - start);
+		
 		if (0)
 		{
 			print_rssi_rle();
 		}
+
+		start = RTIMER_NOW();
 		n_clusters = kmeans(&record, rle_ptr);
+		printf("kmeans time %lu \n",RTIMER_NOW() - start);
+		
+		start = RTIMER_NOW();
 		suspicion_count = check_similarity(/*PROFILING*/ 0);
+		printf("classification time %lu \n",RTIMER_NOW() - start);
 		printf("Number of cluster %d\n", n_clusters);
 		leds_single_off(LEDS_LED1);
 		loop++;
