@@ -69,6 +69,7 @@ static int suspicion_arr_cnt = 0;
 static int suspicion_vector_array[5];
 static uint16_t PCJ_cnt = 0;
 static uint16_t RSJ_cnt = 0;
+static uint16_t RAJ_cnt = 0;
 
 static struct cluster_info
 {
@@ -147,24 +148,25 @@ void calc_consistency(void)
     // printf("Median is: %d\n", suspicious_median);
     for (int i = 0; i < INTERFERENCE_NUMBER_SAMPLES; i++)
     {
-        // printf("Difference: %d >= Threashold: %d\n", abs(suspicious_median - suspicion_vector_array[i]), INTERFERENCE_DURATION_RANDOM);
+        //printf("Difference: %d >= Threashold: %d\n", abs(suspicious_median - suspicion_vector_array[i]), INTERFERENCE_DURATION_RANDOM);
         if (abs(suspicious_median - suspicion_vector_array[i]) >= INTERFERENCE_DURATION_RANDOM)
         {
-            // printf(" \n");
-            printf("RANDOM INTERFERENCE JAMMER\n");
-            // printf(" \n");
-            break;
+           RAJ_cnt ++;
         }
     }
     suspicion_arr_cnt = 0;
-
-    if (PCJ_cnt >= 1)
+    printf("RAJ_cnt: %d \n",RAJ_cnt);
+    if (RAJ_cnt >= 1 && RAJ_cnt >= PCJ_cnt)
     {
-        printf("CONSTANT JAMMER sus : %d\n", PCJ_cnt);
+        printf("RANDOM JAMMER SUSPICIOUS\n");
+    }
+    else if (PCJ_cnt >= 1)
+    {
+        printf("CONSTANT JAMMER SUSPICIOUS\n");
     }
     else if (RSJ_cnt >= 1)
     {
-        printf("REACTIVE JAMMER sus\n");
+        printf("REACTIVE JAMMER SUSPICIOUS\n");
     }
     else
     {
@@ -173,6 +175,7 @@ void calc_consistency(void)
 
     PCJ_cnt = 0;
     RSJ_cnt = 0;
+    RAJ_cnt = 0;
 
     //times += 1;
 }
@@ -206,10 +209,7 @@ int check_similarity(int profiling)
                  printf("%d ", clusters[i].plevel);
                  printf("num_vectors: %d\n", num_vectors);
             }
-            //else
-            {
-                // printf("cluster %d : vector_duration: %d : plevel: %d num_vectors: %d\n", i, clusters[i].vector_duration, clusters[i].plevel, num_vectors);
-            }
+
         }
 
         if (clusters[i].vector_duration >= INTERFERENCE_DURATION_PROACTIVE && clusters[i].plevel >= INTERFERENCE_POWER_LEVEL_THRESHOLD)
@@ -238,17 +238,18 @@ int check_similarity(int profiling)
         else if (clusters[i].vector_duration >= INTERFERENCE_DURATION_MID_MIN && clusters[i].vector_duration <= INTERFERENCE_DURATION_MID_MAX && clusters[i].plevel >= INTERFERENCE_POWER_LEVEL_THRESHOLD)
         {
 
-            printf("SUS RANDOM JAMMER\n");
+            //printf("SUS RANDOM JAMMER\n");
             suspicion_vector_array[suspicion_arr_cnt] = clusters[i].vector_duration;
             suspicion_arr_cnt++;
         }
     }
     int suspicion_arr_cnt_temp = suspicion_arr_cnt;
     printf("suspicion_arr_cnt: %d \n",suspicion_arr_cnt);
-    printf("PCJ_cnt: %d \n",PCJ_cnt);
-    printf("RSJ_cnt: %d \n",RSJ_cnt);
+   
     if (suspicion_arr_cnt >= INTERFERENCE_NUMBER_SAMPLES)
     {
+        printf("PCJ_cnt: %d \n",PCJ_cnt);
+        printf("RSJ_cnt: %d \n",RSJ_cnt);
         calc_consistency();
     }
     return suspicion_arr_cnt_temp;
@@ -349,7 +350,7 @@ int kmeans(struct record *record, int rle_ptr)
     int i = 0;
     while(i < RUN_LENGTH)
     {
-        if(record->rssi_rle[i][0] > INTERFERENCE_POWER_LEVEL_THRESHOLD)
+        if(record->rssi_rle[i][0] > INTERFERENCE_POWER_LEVEL_THRESHOLD/2)
         {
             X[num_vectors][0] = record->rssi_rle[i][1];
             X[num_vectors][1] = record->rssi_rle[i][0];

@@ -92,7 +92,6 @@ void rssi_sampler(int time_window_ms)
 	step_count = 1;
 	rle_ptr = -1;
 	record.sequence_num = 0;
-	int globalCounter = 0;
 	print_counter = 0;
 
 	printf("\n START \n");
@@ -172,8 +171,7 @@ void rssi_sampler(int time_window_ms)
 	// sample_end = RTIMER_NOW();
 	// if (rle_ptr < RUN_LENGTH)
 	// 	rle_ptr++;
-
-	printf("\nNumber of sampels %d : rle_ptr %d\n", globalCounter, rle_ptr);
+	// printf("\nNumber of sampels %d : rle_ptr %d\n", globalCounter, rle_ptr);
 	printf(" \n");
 	printf(" \n");
 }
@@ -410,14 +408,14 @@ PROCESS_THREAD(jammer_trigger_process, ev, data)
 PROCESS(specksense_process, "SpeckSense");
 PROCESS_THREAD(specksense_process, ev, data)
 {
-	//    static struct etimer et;
+	static struct etimer et;
 	static int count, loop=0;
-	int suspicion_count;
+	int suspicion_count = 0;
 	static rtimer_clock_t start;
 	PROCESS_BEGIN();
 	NETSTACK_MAC.off();
 	NETSTACK_RADIO.on();
-
+	etimer_set(&et, CLOCK_SECOND * 1);
 	watchdog_start();
 
 	if (NETSTACK_RADIO.set_value(RADIO_PARAM_CHANNEL, RADIO_CHANNEL) != RADIO_RESULT_OK)
@@ -436,6 +434,9 @@ PROCESS_THREAD(specksense_process, ev, data)
 		for(count = 1;count <= INTERFERENCE_NUMBER_SAMPLES * 2;count++){
 		
 		leds_single_on(LEDS_LED1);
+		PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
+		etimer_reset(&et);
+		
 		start = RTIMER_NOW();
 		rssi_sampler(TIME_WINDOW);
 		printf("rssi_sampler time %lu \n",RTIMER_NOW() - start);
@@ -450,7 +451,10 @@ PROCESS_THREAD(specksense_process, ev, data)
 		printf("kmeans time %lu \n",RTIMER_NOW() - start);
 		
 		start = RTIMER_NOW();
-		suspicion_count = check_similarity(/*PROFILING*/ 0);
+		if (n_clusters > 0 )
+		{
+			suspicion_count = check_similarity(/*PROFILING*/ 0);
+		}
 		printf("classification time %lu \n",RTIMER_NOW() - start);
 		printf("Number of cluster %d\n", n_clusters);
 		leds_single_off(LEDS_LED1);
