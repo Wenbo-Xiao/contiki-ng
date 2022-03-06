@@ -45,19 +45,18 @@ void init_power_levels(void);
     
 /**
  * \brief RSSI sampler stores power level and duration into 2D vector.
- * \param time_window_ms     limited the sample to avoid getting stuck
  */
-void rssi_sampler(int time_window_ms);
+void rssi_sampler_process(void);
 
 /**
  * \brief Runs specksense module
  */
-void specksense_run(void);
+void specksense_process(void);
 
 /**
  * \brief Runs jammer trigger module
  */
-void jammer_trigger_run(void);
+void jammer_trigger_process(void);
 
 
 #endif /* __TSCH_CS_H__ */
