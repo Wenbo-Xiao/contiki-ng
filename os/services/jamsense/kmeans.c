@@ -109,6 +109,14 @@ void swap(struct cluster_info *xp, struct cluster_info *yp)
     *yp = temp;
 }
 /*---------------------------------------------------------------------------*/
+void reset_kmeans(void)
+{
+    suspicion_arr_cnt = 0;
+    PCJ_cnt = 0;
+    RSJ_cnt = 0;
+    RAJ_cnt = 0;
+}
+/*---------------------------------------------------------------------------*/
 void bubble_sort(struct cluster_info arr[], int n, int after_size)
 {
     int i, j;
