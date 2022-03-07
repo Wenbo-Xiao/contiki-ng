@@ -53,10 +53,6 @@
 #include "net/mac/framer/framer-802154.h"
 #include "net/mac/tsch/tsch.h"
 #include "sys/critical.h"
-#if BUILD_WITH_JAMSENSE
-#include "services/jamsense/specksense.h"
-#endif 
-
 
 #include "sys/log.h"
 /* TSCH debug macros, i.e. to set LEDs or GPIOs on various TSCH
@@ -1034,10 +1030,6 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
       tsch_in_slot_operation = 1;
       /* Measure on-air noise level while TSCH is idle */
       tsch_stats_sample_rssi();
-      #if BUILD_WITH_JAMSENSE
-        rssi_sampler_process();
-        specksense_process();
-      #endif 
       /* Reset drift correction */
       drift_correction = 0;
       is_drift_correction_used = 0;

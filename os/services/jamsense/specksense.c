@@ -15,8 +15,6 @@
 #include <stdlib.h>
 #include "net/netstack.h"
 #include "net/packetbuf.h"
-#include "net/mac/tsch/tsch.h"
-#include "net/mac/tsch/tsch-stats.h"
 
 #include "lib/random.h"
 #include "sys/pt.h"
@@ -24,8 +22,6 @@
 #include "sys/ctimer.h"
 #include "sys/rtimer.h"
 #include "sys/log.h"
-#define LOG_MODULE "TSCH JamSense"
-#define LOG_LEVEL LOG_LEVEL_MAC
 
 #include "dev/eeprom.h"
 #include "dev/radio.h"
@@ -70,9 +66,8 @@ static unsigned rssi_levels[RSSI_SIZE];
 static rtimer_clock_t sample_st, sample_end;
 static struct record record;
 
+static radio_value_t channel_c = 26;
 static int packet_cnt = 0;
-static int sample_cnt = 0;
-//static uint8_t pre_measurement_channel = 0;
 
 #if CHANNEL_METRIC == 2
 static uint16_t cidx;
@@ -90,14 +85,24 @@ static void print_rssi_rle()
 }
 
 /*---------------------------------------------------------------------------*/
-void rssi_sampler(int sample_amount)
+void rssi_sampler(int time_window_ms)
 {
 	// sample_st = RTIMER_NOW();
+	max_samples = time_window_ms * 20;//max_samples not used
 	step_count = 1;
+	rle_ptr = -1;
 	record.sequence_num = 0;
 	print_counter = 0;
 
-	LOG_INFO("\n RSSI Sampler Starts \n");
+	printf("\n START \n");
+
+	// for (int i = 0; i < (RUN_LENGTH); i++)
+	// {
+	// 	// printf("Old values: [0]: %d  [1]: %d \n", record.rssi_rle[i][0],record.rssi_rle[i][1]);
+
+	// 	record.rssi_rle[i][0] = 0;
+	// 	record.rssi_rle[i][1] = 0;
+	// }
 
 	record.sequence_num++;
 	rle_ptr = -1;
@@ -107,81 +112,68 @@ void rssi_sampler(int sample_amount)
 	print_counter = 0;
 	int times = 0;
 	watchdog_periodic();
-	//static uint8_t measurement_channel = TSCH_STATS_FIRST_CHANNEL;
-	static uint8_t measurement_channel = 26;
 
-	/* Select the measurement channel */
-	if (NETSTACK_RADIO.set_value(RADIO_PARAM_CHANNEL, measurement_channel) != RADIO_RESULT_OK)
+	while ((rle_ptr < RUN_LENGTH))
 	{
-		LOG_ERR("ERROR: failed to change radio channel, RSSI Sampler failed!\n");
-		sample_cnt = 0;
-	}
-	else
-	{
-		rle_ptr = rle_ptr + sample_cnt;
-		/* Need to explicitly turn on for Coojamotes */
-  		NETSTACK_RADIO.on();
-		
-		while ((rle_ptr < sample_amount + sample_cnt))
+		times++;
+		/*Get RSSI value*/
+
+		/*Start time*/
+		if (NETSTACK_RADIO.get_value(RADIO_PARAM_RSSI, &rssi_val) != RADIO_RESULT_OK)
 		{
-			times++;
-			/*Get RSSI value*/
-
-			/*Start time*/
-			if (NETSTACK_RADIO.get_value(RADIO_PARAM_RSSI, &rssi_val) != RADIO_RESULT_OK)
-			{
-				LOG_ERR("ERROR: failed to get RSSI value!\n");
-			}
-
-			rssi_val -= 45; /* compensation offset */
-			int16_t debug_rssi = rssi_val;
-
-			/*If power level is <= 2 set it to power level 1*/
-			if (debug_rssi <= -132)
-			{
-				debug_rssi = -139;
-			}
-
-			/*Power level most be higher than one */
-			if (rssi_levels[-debug_rssi - 1] > 1)
-			{
-				cond = 0x01 & ((record.rssi_rle[rle_ptr][0] != rssi_levels[-rssi_val - 1]) | (record.rssi_rle[rle_ptr][1] == 32767));
-
-				/*Max_duration achieved, move to next value*/
-				if (record.rssi_rle[rle_ptr][1] >= MAX_DURATION)
-				{
-					cond = 1; /*Jump to next value*/
-				}
-
-				/*Increase rle_ptr when new powerlevel starts recording.*/
-				rle_ptr = rle_ptr + cond;
-				rssi_val_mod = -rssi_val - 1;
-
-				/*Check out of bounds*/
-				if (rssi_val_mod >= 140)
-				{
-					rssi_val_mod = 139;
-					// printf("out of loop I guess\n");
-				}
-
-				/*Create 2D vector*/
-				record.rssi_rle[rle_ptr][0] = rssi_levels[rssi_val_mod];
-				record.rssi_rle[rle_ptr][1] = (record.rssi_rle[rle_ptr][1]) * (1 - cond) + 1;
-				//printf(" rle_ptr: %d  level: %d  duratuion: %d \n",rle_ptr,record.rssi_rle[rle_ptr][0],	record.rssi_rle[rle_ptr][1]);
-			}
-			else
-			{ /*I think a problem might be that it loops here without printing anything for a very long amount of time. */
-				// if (rle_ptr == 498){}
-			}
+			printf(" ff");
 		}
-		LOG_INFO("This is how many times the loop looped: %d \n", times);
-		watchdog_start();
-		sample_cnt = rle_ptr;
-		// sample_end = RTIMER_NOW();
-		//printf("\nNumber of sampels needed %d : rle_ptr %d\n", RUN_LENGTH, rle_ptr);
+
+		rssi_val -= 45; /* compensation offset */
+		int16_t debug_rssi = rssi_val;
+
+		/*If power level is <= 2 set it to power level 1*/
+		if (debug_rssi <= -132)
+		{
+			debug_rssi = -139;
+		}
+
+		/*Power level most be higher than one */
+		if (rssi_levels[-debug_rssi - 1] > 1)
+		{
+			cond = 0x01 & ((record.rssi_rle[rle_ptr][0] != rssi_levels[-rssi_val - 1]) | (record.rssi_rle[rle_ptr][1] == 32767));
+
+			/*Max_duration achieved, move to next value*/
+			if (record.rssi_rle[rle_ptr][1] >= MAX_DURATION)
+			{
+				cond = 1; /*Jump to next value*/
+			}
+
+			/*Increase rle_ptr when new powerlevel starts recording.*/
+			rle_ptr = rle_ptr + cond;
+			rssi_val_mod = -rssi_val - 1;
+
+			/*Check out of bounds*/
+			if (rssi_val_mod >= 140)
+			{
+				rssi_val_mod = 139;
+				// printf("out of loop I guess\n");
+			}
+
+			/*Create 2D vector*/
+			record.rssi_rle[rle_ptr][0] = rssi_levels[rssi_val_mod];
+			record.rssi_rle[rle_ptr][1] = (record.rssi_rle[rle_ptr][1]) * (1 - cond) + 1;
+			//printf(" rle_ptr: %d  level: %d  duratuion: %d \n",rle_ptr,record.rssi_rle[rle_ptr][0],	record.rssi_rle[rle_ptr][1]);
+		}
+		else
+		{ /*I think a problem might be that it loops here without printing anything for a very long amount of time. */
+			// if (rle_ptr == 498){}
+		}
 	}
-	// printf(" \n");
-	// printf(" \n");
+	printf("This is how many times the loop looped: %d \n", times);
+	watchdog_start();
+
+	// sample_end = RTIMER_NOW();
+	// if (rle_ptr < RUN_LENGTH)
+	// 	rle_ptr++;
+	// printf("\nNumber of sampels %d : rle_ptr %d\n", globalCounter, rle_ptr);
+	printf(" \n");
+	printf(" \n");
 }
 /*---------------------------------------------------------------------------*/
 
@@ -372,8 +364,7 @@ static void
 set_channel(void)
 {
 	printf("Set channel\n");
-	static uint8_t measurement_channel = TSCH_STATS_FIRST_CHANNEL;
-	if (NETSTACK_RADIO.set_value(RADIO_PARAM_CHANNEL, measurement_channel) != RADIO_RESULT_OK)
+	if (NETSTACK_RADIO.set_value(RADIO_PARAM_CHANNEL, channel_c) != RADIO_RESULT_OK)
 	{
 		printf("ERROR: failed to change radio channel\n");
 	}
@@ -388,8 +379,8 @@ run_transmit(void)
 	packet_cnt++;
 }
 /*---------------------------------------------------------------------------*/
-PROCESS(jammer_trigger, "jammer trigger process");
-PROCESS_THREAD(jammer_trigger, ev, data)
+PROCESS(jammer_trigger_process, "jammer trigger process");
+PROCESS_THREAD(jammer_trigger_process, ev, data)
 {
 	static struct etimer et,et_period;
 	PROCESS_BEGIN();
@@ -414,105 +405,89 @@ PROCESS_THREAD(jammer_trigger, ev, data)
 }
 
 /*---------------------------------------------------------------------------*/
-PROCESS(specksense, "SpeckSense");
-PROCESS_THREAD(specksense, ev, data)
+PROCESS(specksense_process, "SpeckSense");
+PROCESS_THREAD(specksense_process, ev, data)
 {
-	//static struct etimer et;
-	//static int count, loop=0;
-	//int suspicion_count = 0;
+	static struct etimer et;
+	static int count, loop=0;
+	int suspicion_count = 0;
 	static rtimer_clock_t start;
 	PROCESS_BEGIN();
-	
-	if(sample_cnt >= RUN_LENGTH)
+	NETSTACK_MAC.off();
+	NETSTACK_RADIO.on();
+	etimer_set(&et, CLOCK_SECOND * 1);
+	watchdog_start();
+
+	if (NETSTACK_RADIO.set_value(RADIO_PARAM_CHANNEL, RADIO_CHANNEL) != RADIO_RESULT_OK)
 	{
-	
-		
-		//etimer_set(&et, CLOCK_SECOND * 1);
-		watchdog_start();
-		
-		sample_cnt = 0;
-		// record.sequence_num = 0;
-		// /*
-		// 	They need to have the same format after the RSSI sampler in order to be as one process
-		// */
-
-		// printf("J_D: %d RSSI_SIZE:%d POWER_LEVELS: %d \n", J_D, RSSI_SIZE, POWER_LEVELS);
-		if (J_D)
-		{	
-			// for(count = 1;count <= INTERFERENCE_NUMBER_SAMPLES * 2;count++){
-			
-			// leds_single_on(LEDS_LED1);
-			// PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
-			// etimer_reset(&et);
-			
-			// start = RTIMER_NOW();
-			// rssi_sampler(TIME_WINDOW);
-			// printf("rssi_sampler time %lu \n",RTIMER_NOW() - start);
-			
-			if (0)
-			{
-				print_rssi_rle();
-			}
-
-			start = RTIMER_NOW();
-			n_clusters = kmeans(&record, rle_ptr);
-			printf("kmeans time %lu \n",RTIMER_NOW() - start);
-			
-			start = RTIMER_NOW();
-			if (n_clusters > 0 )
-			{
-				//suspicion_count = check_similarity(/*PROFILING*/ 0);
-				check_similarity(/*PROFILING*/ 0);
-			}
-			printf("classification time %lu \n",RTIMER_NOW() - start);
-			printf("Number of cluster %d\n", n_clusters);
-			// leds_single_off(LEDS_LED1);
-			// loop++;
-			// printf("Number of loop %d\n", loop);
-		// 	if (suspicion_count >= 5)
-		// 	{
-		// 		break;
-		// 	}
-		// 	}			
-		}
-		else if (J_D != 1)
-		{
-			rssi_sampler_old(TIME_WINDOW);
-			n_clusters = kmeans_old(&record, rle_ptr);
-			// print_rssi_rle();
-			check_unintentional_interference(n_clusters);
-			// print_interarrival(RADIO_CHANNEL, n_clusters);
-		}
+		printf("ERROR: failed to change radio channel, JamSense ends\n");
 	}
+
+	record.sequence_num = 0;
+	/*
+		They need to have the same format after the RSSI sampler in order to be as one process
+	*/
+
+	// printf("J_D: %d RSSI_SIZE:%d POWER_LEVELS: %d \n", J_D, RSSI_SIZE, POWER_LEVELS);
+	if (J_D)
+	{	
+		for(count = 1;count <= INTERFERENCE_NUMBER_SAMPLES * 2;count++){
+		
+		leds_single_on(LEDS_LED1);
+		PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
+		etimer_reset(&et);
+		
+		start = RTIMER_NOW();
+		rssi_sampler(TIME_WINDOW);
+		printf("rssi_sampler time %lu \n",RTIMER_NOW() - start);
+		
+		if (0)
+		{
+			print_rssi_rle();
+		}
+
+		start = RTIMER_NOW();
+		n_clusters = kmeans(&record, rle_ptr);
+		printf("kmeans time %lu \n",RTIMER_NOW() - start);
+		
+		start = RTIMER_NOW();
+		if (n_clusters > 0 )
+		{
+			suspicion_count = check_similarity(/*PROFILING*/ 0);
+		}
+		printf("classification time %lu \n",RTIMER_NOW() - start);
+		printf("Number of cluster %d\n", n_clusters);
+		leds_single_off(LEDS_LED1);
+		loop++;
+		printf("Number of loop %d\n", loop);
+		if (suspicion_count >= 5)
+		{
+			break;
+		}
+		}			
+	}
+	else if (J_D != 1)
+	{
+		rssi_sampler_old(TIME_WINDOW);
+		n_clusters = kmeans_old(&record, rle_ptr);
+		// print_rssi_rle();
+		check_unintentional_interference(n_clusters);
+		// print_interarrival(RADIO_CHANNEL, n_clusters);
+	}
+
 		
 	
 	PROCESS_END();
 }
 /*---------------------------------------------------------------------------*/
-void rssi_sampler_process(void)
+void specksense_run(void)
 {
-//   uint8_t measurement_channel = TSCH_STATS_FIRST_CHANNEL; 
-
-//   //if channel has changed, reset sampler
-//   if(measurement_channel != pre_measurement_channel)
-//   {
-// 	sample_cnt = 0;
-//   }
-
-/*led to reboot somehow*/
-  //rssi_sampler(0);
-//   pre_measurement_channel = measurement_channel;
-
+  process_start(&specksense_process, NULL);
 }
 /*---------------------------------------------------------------------------*/
-void specksense_process(void)
+void jammer_trigger_run(void)
 {
-  process_start(&specksense, NULL);
-}
-/*---------------------------------------------------------------------------*/
-void jammer_trigger_process(void)
-{
-  process_start(&jammer_trigger, NULL);
+  process_start(&jammer_trigger_process, NULL);
 }
 
 

@@ -3,9 +3,7 @@
 #include <math.h>
 #include "sys/rtimer.h"
 #include "sys/etimer.h"
-#include "sys/log.h"
-#define LOG_MODULE "TSCH JamSense"
-#define LOG_LEVEL LOG_LEVEL_MAC
+
 
 /*Jamming detection, could be places in a makefile*/
 #if J_D == 1
@@ -571,7 +569,10 @@ int kmeans(struct record *record, int rle_ptr)
             {
                 if (clusters[i].plevel >= 6)
                 {
-                    printf("cluster: %d  vector_duration: %d  plevel: %d  num_vectors: %d\n", i, clusters[i].vector_duration, clusters[i].plevel, num_vectors);
+                    printf("cluster %d : vector_duration: %d :", i, clusters[i].vector_duration);
+                    printf("plevel: ");
+                    printf("%d ", clusters[i].plevel);
+                    printf("num_vectors: %d\n", num_vectors);
                 }
                 else
                 {
