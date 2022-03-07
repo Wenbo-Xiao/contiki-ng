@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "tsch.h": "c",
+        "packetbuf.h": "c",
+        "sixtop.h": "c",
+        "specksense.h": "c",
+        "random.h": "c"
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
+}

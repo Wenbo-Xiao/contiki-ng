@@ -3,7 +3,9 @@
 #include <math.h>
 #include "sys/rtimer.h"
 #include "sys/etimer.h"
-
+#include "sys/log.h"
+#define LOG_MODULE "TSCH JamSense"
+#define LOG_LEVEL LOG_LEVEL_MAC
 
 /*Jamming detection, could be places in a makefile*/
 #if J_D == 1
@@ -163,18 +165,18 @@ void calc_consistency(void)
         }
     }
     suspicion_arr_cnt = 0;
-    printf("RAJ_cnt: %d \n",RAJ_cnt);
+    LOG_DBG("RAJ_cnt: %d \n",RAJ_cnt);
     if (RAJ_cnt >= 1 && RAJ_cnt >= PCJ_cnt)
     {
-        printf("RANDOM JAMMER SUSPICIOUS\n");
+        LOG_PRINT("RANDOM JAMMER SUSPICIOUS\n");
     }
     else if (PCJ_cnt >= 1)
     {
-        printf("CONSTANT JAMMER SUSPICIOUS\n");
+        LOG_PRINT("CONSTANT JAMMER SUSPICIOUS\n");
     }
     else if (RSJ_cnt >= 1)
     {
-        printf("REACTIVE JAMMER SUSPICIOUS\n");
+        LOG_PRINT("REACTIVE JAMMER SUSPICIOUS\n");
     }
     else
     {
@@ -208,7 +210,7 @@ int check_similarity(int profiling)
     for (int i = 0; i < prev_num_clusters_final; i++)
     {
         /*Debug*/
-        if (1)
+        if (0)
         {
             //if (clusters[i].plevel >= 6)
             {
@@ -252,12 +254,12 @@ int check_similarity(int profiling)
         }
     }
     int suspicion_arr_cnt_temp = suspicion_arr_cnt;
-    printf("suspicion_arr_cnt: %d \n",suspicion_arr_cnt);
+    LOG_INFO("suspicion_arr_cnt: %d \n",suspicion_arr_cnt);
    
     if (suspicion_arr_cnt >= INTERFERENCE_NUMBER_SAMPLES)
     {
-        printf("PCJ_cnt: %d \n",PCJ_cnt);
-        printf("RSJ_cnt: %d \n",RSJ_cnt);
+        LOG_DBG("PCJ_cnt: %d \n",PCJ_cnt);
+        LOG_DBG("RSJ_cnt: %d \n",RSJ_cnt);
         calc_consistency();
     }
     return suspicion_arr_cnt_temp;
@@ -573,7 +575,7 @@ int kmeans(struct record *record, int rle_ptr)
             clusters[i].vector_duration = prev_K_final[i][0];
             clusters[i].plevel = prev_K_final[i][1];
 
-            if (DEBUG_MODE)
+            if (0)
             {
                 if (clusters[i].plevel >= 6)
                 {

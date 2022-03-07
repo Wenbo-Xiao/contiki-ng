@@ -62,7 +62,7 @@ static uint16_t n_clusters;
 //! Global variables for RSSI scan
 static int rssi_val, /*rssi_valB,*/ rle_ptr = -1, /*rle_ptrB = -1,*/
  		   cond, itr,
-		   n_samples, max_samples, rssi_val_mod;
+		   rssi_val_mod;
 
 static unsigned rssi_levels[RSSI_SIZE];
 static struct record record;
@@ -77,27 +77,18 @@ static int itr_j;
 static int current_channel = RADIO_CHANNEL;
 #endif
 
-static void print_rssi_rle()
-{
-	int i;
-	printf("RSSI");
-	for (i = 0; i <= rle_ptr; i++)
-		printf(" (%d,%d)", record.rssi_rle[i][0], record.rssi_rle[i][1]);
-	printf("\nrle_ptr:%d,%d,%d\n", rle_ptr, max_samples, n_samples);
-}
-
 /*---------------------------------------------------------------------------*/
 void rssi_sampler(int sample_amount, int channel)
 {
 	// sample_st = RTIMER_NOW();
 	rle_ptr = -1;
-	printf("\n START \n");
+	LOG_DBG("\n START \n");
 
 	record.rssi_rle[0][1] = 0;
 	record.rssi_rle[0][0] = 0;
 
 	int times = 0;
-	watchdog_periodic();
+	//watchdog_periodic();
 
 	if (NETSTACK_RADIO.set_value(RADIO_PARAM_CHANNEL, channel) != RADIO_RESULT_OK)
 	{
@@ -155,7 +146,7 @@ void rssi_sampler(int sample_amount, int channel)
 				/*Create 2D vector*/
 				record.rssi_rle[rle_ptr][0] = rssi_levels[rssi_val_mod];
 				record.rssi_rle[rle_ptr][1] = (record.rssi_rle[rle_ptr][1]) * (1 - cond) + 1;
-				printf(" rle_ptr: %d  level: %d  duratuion: %d \n",rle_ptr,record.rssi_rle[rle_ptr][0],	record.rssi_rle[rle_ptr][1]);
+				// LOG_DBG(" rle_ptr: %d  level: %d  duratuion: %d \n",rle_ptr,record.rssi_rle[rle_ptr][0],	record.rssi_rle[rle_ptr][1]);
 			}
 			else
 			{ /*I think a problem might be that it loops here without printing anything for a very long amount of time. */
@@ -163,18 +154,16 @@ void rssi_sampler(int sample_amount, int channel)
 			}
 		}
 	}
-	printf("This is how many times the loop looped: %d \n", times);
-	watchdog_start();
+	LOG_DBG("This is how many times the loop looped: %d \n", times);
+	//watchdog_start();
 	sample_cnt = rle_ptr;
 	// printf("\nNumber of sampels needed %d : rle_ptr %d\n", globalCounter, rle_ptr);
-	printf(" \n");
-	printf(" \n");
 }
 /*---------------------------------------------------------------------------*/
 
 void init_power_levels()
 {
-	printf("POWER_LEVELS: %d", POWER_LEVELS);
+	LOG_INFO("POWER_LEVELS: %d", POWER_LEVELS);
 #if POWER_LEVELS == 2
 	for (itr = 0; itr < 120; itr++)
 		if (itr < 90)
@@ -348,46 +337,28 @@ PROCESS(specksense, "SpeckSense");
 PROCESS_THREAD(specksense, ev, data)
 {
 	uint8_t measurement_channel = 26; 
-	static struct etimer et;
-	static rtimer_clock_t start;
+	//static rtimer_clock_t start;
 	PROCESS_BEGIN();
 	NETSTACK_RADIO.on();
-	etimer_set(&et, CLOCK_SECOND * 1);
-	watchdog_start();
+	//watchdog_start();
 	if(measurement_channel != pre_measurement_channel)
 	{
 		sample_cnt = 0;
-		void reset_kmeans();
-		printf("channel changed, reset specksense!\n");
+		reset_kmeans();
+		LOG_INFO("channel changed, reset specksense!\n");
 	}
 	pre_measurement_channel = measurement_channel;
 
-	start = RTIMER_NOW();
 	rssi_sampler(SAMPLE_AMOUNT,measurement_channel);
-	printf("rssi_sampler time %lu \n",RTIMER_NOW() - start);
-	printf("sample_cnt %d \n",sample_cnt);
-	if (sample_cnt >= RUN_LENGTH)
-	{	
-		leds_single_on(LEDS_LED1);
-		
-		if (0)
-		{
-			print_rssi_rle();
-		}
 
-		start = RTIMER_NOW();
+	if (sample_cnt >= RUN_LENGTH)
+	{		
 		n_clusters = kmeans(&record, rle_ptr);
-		printf("kmeans time %lu \n",RTIMER_NOW() - start);
-		
-		start = RTIMER_NOW();
+	
 		if (n_clusters > 0 )
 		{
 			check_similarity(/*PROFILING*/ 0);
 		}
-		printf("classification time %lu \n",RTIMER_NOW() - start);
-		printf("Number of cluster %d\n", n_clusters);
-		leds_single_off(LEDS_LED1);
-	
 	}
 	PROCESS_END();
 }

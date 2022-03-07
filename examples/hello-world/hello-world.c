@@ -55,11 +55,11 @@ PROCESS_THREAD(hello_world_process, ev, data)
   etimer_set(&timer, CLOCK_SECOND * 10);
 
   while(1) {
-    printf("Hello, world\n");
+    
 
     /* Wait for the periodic timer to expire and then restart the timer. */
     PROCESS_WAIT_EVENT_UNTIL(ev == button_hal_press_event);
-    specksense_run();
+
 
   }
 
