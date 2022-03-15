@@ -347,8 +347,7 @@ PROCESS_THREAD(specksense, ev, data)
 	{
 		PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&jamsense_timer) && ev == PROCESS_EVENT_POLL);
     	etimer_reset(&jamsense_timer);
-		LOG_INFO("specksense!\n");
-	if(0){	//get current channel
+		//get current channel
 		#if MAC_CONF_WITH_TSCH
 		//measurement_channel = tsch_current_channel;
 		measurement_channel = 26;
@@ -376,13 +375,14 @@ PROCESS_THREAD(specksense, ev, data)
 				check_similarity(/*PROFILING*/ 0);
 			}
 		}
-		}	}
+		}
 	PROCESS_END();
 }
 /*---------------------------------------------------------------------------*/
 void specksense_process()
 {
-	process_poll(&specksense);
+	//process_poll(&specksense);
+	LOG_INFO("specksense!\n");
 }
 /*---------------------------------------------------------------------------*/
 void jammer_trigger_process(void)

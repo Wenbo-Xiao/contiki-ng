@@ -91,7 +91,7 @@ void rssi_sampler(int sample_amount, int channel)
 	record.rssi_rle[0][0] = 0;
 
 	int times = 0;
-	watchdog_periodic();
+	//watchdog_periodic();
 
 	if (NETSTACK_RADIO.set_value(RADIO_PARAM_CHANNEL, channel) != RADIO_RESULT_OK)
 	{
@@ -158,7 +158,7 @@ void rssi_sampler(int sample_amount, int channel)
 		}
 	}
 	LOG_DBG("This is how many times the loop looped: %d \n", times);
-	watchdog_start();
+	//watchdog_start();
 	sample_cnt = rle_ptr;
 	// printf("\nNumber of sampels needed %d : rle_ptr %d\n", globalCounter, rle_ptr);
 }
@@ -347,8 +347,7 @@ PROCESS_THREAD(specksense, ev, data)
 	{
 		PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&jamsense_timer) && ev == PROCESS_EVENT_POLL);
     	etimer_reset(&jamsense_timer);
-		LOG_INFO("specksense!\n");
-	if(0){	//get current channel
+		//get current channel
 		#if MAC_CONF_WITH_TSCH
 		//measurement_channel = tsch_current_channel;
 		measurement_channel = 26;
@@ -357,7 +356,7 @@ PROCESS_THREAD(specksense, ev, data)
 		#endif
 
 		NETSTACK_RADIO.on();
-		watchdog_start();
+		//watchdog_start();
 		if(measurement_channel != pre_measurement_channel)
 		{
 			sample_cnt = 0;
@@ -371,18 +370,23 @@ PROCESS_THREAD(specksense, ev, data)
 		if (sample_cnt >= RUN_LENGTH)
 		{		
 			n_clusters = kmeans(&record, rle_ptr);
+
 			if (n_clusters > 0 )
 			{
 				check_similarity(/*PROFILING*/ 0);
 			}
 		}
-		}	}
+	}
 	PROCESS_END();
 }
 /*---------------------------------------------------------------------------*/
-void specksense_process()
+void specksense_process(int loop)
 {
+   if(loop <= 5)
+  {
 	process_poll(&specksense);
+  }
+  
 }
 /*---------------------------------------------------------------------------*/
 void jammer_trigger_process(void)

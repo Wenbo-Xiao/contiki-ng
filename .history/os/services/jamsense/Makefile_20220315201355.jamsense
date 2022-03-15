@@ -10,7 +10,7 @@ CFLAGS+=-DTIME_WINDOW=1000 #1000
 CFLAGS+=-DDEBUG_RSSI=0
 CFLAGS+=-DCHANNEL_METRIC=1
 CFLAGS+=-DPROFILING=1
-CFLAGS+=-DSAMPLE_AMOUNT=250 #amount of sample for one scan
+CFLAGS+=-DSAMPLE_AMOUNT=125 #amount of sample for one scan
 
 CFLAGS+=-DJ_D=1  #Jamming detection
 #CFLAGS+=-DJ_D=0  #interference detection

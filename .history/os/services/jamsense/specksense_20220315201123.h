@@ -51,8 +51,9 @@ void rssi_sampler(int sample_amount, int channel);
 
 /**
  * \brief Runs specksense module
+ * \param loop     limited loop
  */
-void specksense_process();
+void specksense_process(int loop);
 
 /**
  * \brief Runs jammer trigger module

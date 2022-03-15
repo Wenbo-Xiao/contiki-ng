@@ -168,15 +168,15 @@ void calc_consistency(void)
     LOG_DBG("RAJ_cnt: %d \n",RAJ_cnt);
     if (RAJ_cnt >= 1 && RAJ_cnt >= PCJ_cnt)
     {
-        LOG_PRINT("RANDOM JAMMER SUSPICIOUS\n");
+        LOG_INFO("RANDOM JAMMER SUSPICIOUS\n");
     }
     else if (PCJ_cnt >= 1)
     {
-        LOG_PRINT("CONSTANT JAMMER SUSPICIOUS\n");
+        LOG_INFO("CONSTANT JAMMER SUSPICIOUS\n");
     }
     else if (RSJ_cnt >= 1)
     {
-        LOG_PRINT("REACTIVE JAMMER SUSPICIOUS\n");
+        LOG_INFO("REACTIVE JAMMER SUSPICIOUS\n");
     }
     else
     {
