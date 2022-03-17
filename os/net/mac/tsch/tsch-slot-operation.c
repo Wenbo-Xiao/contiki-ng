@@ -1034,7 +1034,7 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
       /* Measure on-air noise level while TSCH is idle */
       tsch_stats_sample_rssi();
       #if BUILD_WITH_JAMSENSE
-        specksense_process();
+        rssi_sampler(125,26);
       #endif 
       /* Reset drift correction */
       drift_correction = 0;

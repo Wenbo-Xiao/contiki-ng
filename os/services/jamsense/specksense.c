@@ -17,6 +17,7 @@
 #include "net/packetbuf.h"
 #include "net/mac/tsch/tsch.h"
 #include "net/mac/tsch/tsch-stats.h"
+#include "net/mac/tsch/tsch-slot-operation.h"
 
 #include "lib/random.h"
 #include "sys/pt.h"
@@ -66,7 +67,7 @@ static int rssi_val, /*rssi_valB,*/ rle_ptr = -1, /*rle_ptrB = -1,*/
 
 static unsigned rssi_levels[RSSI_SIZE];
 static struct record record;
-static struct etimer jamsense_timer;
+//static struct etimer jamsense_timer;
 
 static int packet_cnt = 0;
 static int sample_cnt = 0;
@@ -85,20 +86,36 @@ void rssi_sampler(int sample_amount, int channel)
 {
 	// sample_st = RTIMER_NOW();
 	rle_ptr = -1;
-	LOG_DBG("\n START \n");
+	//LOG_DBG("\n START \n");
 
 	record.rssi_rle[0][1] = 0;
 	record.rssi_rle[0][0] = 0;
 
+	#if !MAC_CONF_WITH_TSCH
+	channel = 26;
+	#endif
+
+	if(channel != pre_measurement_channel)
+		{
+			sample_cnt = 0;
+			reset_kmeans();
+			//LOG_INFO("channel changed to %d, reset specksense!\n",channel);
+		}
+	pre_measurement_channel = channel;
+
 	int times = 0;
-	watchdog_periodic();
+	//watchdog_periodic();
 
 	if (NETSTACK_RADIO.set_value(RADIO_PARAM_CHANNEL, channel) != RADIO_RESULT_OK)
 	{
-		LOG_ERR("ERROR: failed to change radio channel, RSSI Sampler failed!\n");
+		//LOG_ERR("ERROR: failed to change radio channel, RSSI Sampler failed!\n");
 		sample_cnt = 0;
 	}
+#if MAC_CONF_WITH_TSCH
+	else if (tsch_get_lock())
+#else
 	else
+#endif
 	{
 		rle_ptr = rle_ptr + sample_cnt;
 		/* Need to explicitly turn on for Coojamotes */
@@ -112,7 +129,7 @@ void rssi_sampler(int sample_amount, int channel)
 			/*Start time*/
 			if (NETSTACK_RADIO.get_value(RADIO_PARAM_RSSI, &rssi_val) != RADIO_RESULT_OK)
 			{
-				LOG_ERR("ERROR: failed to get RSSI value!\n");
+				//LOG_ERR("ERROR: failed to get RSSI value!\n");
 			}
 
 			rssi_val -= 45; /* compensation offset */
@@ -156,11 +173,14 @@ void rssi_sampler(int sample_amount, int channel)
 				// if (rle_ptr == 498){}
 			}
 		}
+#if MAC_CONF_WITH_TSCH
+		tsch_release_lock();
+#endif
 	}
-	LOG_DBG("This is how many times the loop looped: %d \n", times);
-	watchdog_start();
+	//LOG_INFO("This is how many times the loop looped: %d \n", times);
+	//watchdog_start();
 	sample_cnt = rle_ptr;
-	// printf("\nNumber of sampels needed %d : rle_ptr %d\n", globalCounter, rle_ptr);
+	LOG_INFO(" rle_ptr %d\n", rle_ptr);
 }
 /*---------------------------------------------------------------------------*/
 
@@ -290,8 +310,8 @@ void init_power_levels()
 #else
 #error "Power levels should be one of the following values: 2, 4, 8, 16 or 120"
 #endif
-	etimer_set(&jamsense_timer, CLOCK_SECOND * 3);
-	process_start(&specksense, NULL);
+	// etimer_set(&jamsense_timer, CLOCK_SECOND * 3);
+	// process_start(&specksense, NULL);
 }
 /*---------------------------------------------------------------------------*/
 static void set_channel(void)
@@ -340,49 +360,51 @@ PROCESS_THREAD(jammer_trigger, ev, data)
 /*---------------------------------------------------------------------------*/
 PROCESS_THREAD(specksense, ev, data)
 {
-	static uint8_t measurement_channel; 
 	//static rtimer_clock_t start;
 	PROCESS_BEGIN();
 	while(1)
 	{
-		PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&jamsense_timer) && ev == PROCESS_EVENT_POLL);
-    	etimer_reset(&jamsense_timer);
+		PROCESS_WAIT_EVENT_UNTIL(ev == PROCESS_EVENT_POLL);
+    	// etimer_reset(&jamsense_timer);
 		LOG_INFO("specksense!\n");
-	if(0){	//get current channel
-		#if MAC_CONF_WITH_TSCH
-		//measurement_channel = tsch_current_channel;
-		measurement_channel = 26;
-		#else
-		measurement_channel = 26;
-		#endif
+		//get current channel
+		//
 
-		NETSTACK_RADIO.on();
-		watchdog_start();
-		if(measurement_channel != pre_measurement_channel)
-		{
-			sample_cnt = 0;
-			reset_kmeans();
-			LOG_INFO("channel changed to %d, reset specksense!\n",measurement_channel);
-		}
-		pre_measurement_channel = measurement_channel;
+		// NETSTACK_RADIO.on();
+		// watchdog_start();
 
-		rssi_sampler(SAMPLE_AMOUNT,measurement_channel);
+
+		//
 
 		if (sample_cnt >= RUN_LENGTH)
 		{		
 			n_clusters = kmeans(&record, rle_ptr);
+			LOG_INFO("Got %d clusters!\n",n_clusters);
 			if (n_clusters > 0 )
 			{
 				check_similarity(/*PROFILING*/ 0);
 			}
+			sample_cnt = 0;
 		}
-		}	}
+		}
 	PROCESS_END();
 }
 /*---------------------------------------------------------------------------*/
 void specksense_process()
 {
-	process_poll(&specksense);
+	//process_poll(&specksense);
+	//LOG_INFO("specksense!\n");
+	if (sample_cnt >= RUN_LENGTH)
+	{		
+		n_clusters = kmeans(&record, rle_ptr);
+		LOG_INFO("Got %d clusters!\n",n_clusters);
+		if (n_clusters > 0 )
+		{
+			check_similarity(/*PROFILING*/ 0);
+		}
+		sample_cnt = 0;
+	}
+
 }
 /*---------------------------------------------------------------------------*/
 void jammer_trigger_process(void)

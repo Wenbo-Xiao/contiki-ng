@@ -62,6 +62,10 @@
 #include "net/mac/tsch/sixtop/sixtop.h"
 #endif
 
+#if BUILD_WITH_JAMSENSE
+#include "services/jamsense/specksense.h"
+#endif 
+
 #if FRAME802154_VERSION < FRAME802154_IEEE802154_2015
 #error TSCH: FRAME802154_VERSION must be at least FRAME802154_IEEE802154_2015
 #endif
@@ -975,6 +979,9 @@ PROCESS_THREAD(tsch_pending_events_process, ev, data)
 #ifdef TSCH_CALLBACK_SELECT_CHANNELS
     TSCH_CALLBACK_SELECT_CHANNELS();
 #endif
+#if BUILD_WITH_JAMSENSE
+    specksense_process();
+#endif 
   }
   PROCESS_END();
 }
