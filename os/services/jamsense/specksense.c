@@ -53,7 +53,12 @@
 #define RSSI_SIZE 120
 #define POWER_LEVELS 16
 #endif
+
+#if QUICK_PROACTIVE == 1
+#define MAX_DURATION 500
+#else
 #define MAX_DURATION 1000
+#endif
 
 /*---------------------------------------------------------------------------*/
 //! Global variables
@@ -84,9 +89,15 @@ PROCESS(specksense, "SpeckSense");
 /*---------------------------------------------------------------------------*/
 void rssi_sampler(int sample_amount, int channel)
 {
+	/*sample_amount is the amount that is going to do, sample_cnt is the amount that already done*/
+	if(sample_amount + sample_cnt > RUN_LENGTH)
+	{
+		sample_amount = RUN_LENGTH - sample_cnt;
+	}
+	//LOG_INFO("START RSSI, Sample amount: %d  \n",sample_amount);
 	// sample_st = RTIMER_NOW();
 	rle_ptr = -1;
-	//LOG_DBG("\n START \n");
+	
 
 	record.rssi_rle[0][1] = 0;
 	record.rssi_rle[0][0] = 0;
@@ -180,7 +191,7 @@ void rssi_sampler(int sample_amount, int channel)
 	//LOG_INFO("This is how many times the loop looped: %d \n", times);
 	//watchdog_start();
 	sample_cnt = rle_ptr;
-	LOG_INFO(" rle_ptr %d\n", rle_ptr);
+	//LOG_INFO(" rle_ptr %d\n", rle_ptr);
 }
 /*---------------------------------------------------------------------------*/
 
@@ -376,16 +387,16 @@ PROCESS_THREAD(specksense, ev, data)
 
 		//
 
-		if (sample_cnt >= RUN_LENGTH)
-		{		
-			n_clusters = kmeans(&record, rle_ptr);
-			LOG_INFO("Got %d clusters!\n",n_clusters);
-			if (n_clusters > 0 )
-			{
-				check_similarity(/*PROFILING*/ 0);
-			}
-			sample_cnt = 0;
-		}
+		// if (sample_cnt >= RUN_LENGTH)
+		// {		
+		// 	n_clusters = kmeans(&record, rle_ptr);
+		// 	LOG_INFO("Got %d clusters!\n",n_clusters);
+		// 	if (n_clusters > 0 )
+		// 	{
+		// 		check_similarity(/*PROFILING*/ 0);
+		// 	}
+		// 	sample_cnt = 0;
+		// }
 		}
 	PROCESS_END();
 }

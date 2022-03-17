@@ -210,7 +210,7 @@ int check_similarity(int profiling)
     for (int i = 0; i < prev_num_clusters_final; i++)
     {
         /*Debug*/
-        if (0)
+        if (1)
         {
             //if (clusters[i].plevel >= 6)
             {
@@ -221,7 +221,33 @@ int check_similarity(int profiling)
             }
 
         }
+#if QUICK_PROACTIVE == 1
+        if(clusters[i].plevel >= INTERFERENCE_POWER_LEVEL_THRESHOLD)
+        {
+            if (clusters[i].vector_duration >= INTERFERENCE_DURATION_SFD_MIN && clusters[i].vector_duration <= INTERFERENCE_DURATION_SFD_MAX)
+            {
 
+                // printf(" \n");
+                //  printf("THE REAL SFD REACTIVE INTERFERENCE JAMMER\n");
+                // printf(" \n");
+                //suspicion_vector_array[suspicion_arr_cnt] = clusters[i].vector_duration;
+                suspicion_arr_cnt++;
+                RSJ_cnt += 1;
+
+                break;
+            }
+            else if (clusters[i].vector_duration >= INTERFERENCE_DURATION_MID_MIN )
+            {
+                // printf(" \n");
+                //  printf("THE REAL PROACTIVE CONSTANT INTERFERENCE JAMMER\n");
+                // printf(" \n");
+                //suspicion_vector_array[suspicion_arr_cnt] = clusters[i].vector_duration;
+                suspicion_arr_cnt++;
+                PCJ_cnt += 1;
+                break;
+            }
+        }
+#else
         if (clusters[i].vector_duration >= INTERFERENCE_DURATION_PROACTIVE && clusters[i].plevel >= INTERFERENCE_POWER_LEVEL_THRESHOLD)
         {
             // printf(" \n");
@@ -252,6 +278,7 @@ int check_similarity(int profiling)
             suspicion_vector_array[suspicion_arr_cnt] = clusters[i].vector_duration;
             suspicion_arr_cnt++;
         }
+#endif
     }
     int suspicion_arr_cnt_temp = suspicion_arr_cnt;
     LOG_INFO("suspicion_arr_cnt: %d \n",suspicion_arr_cnt);
@@ -260,7 +287,21 @@ int check_similarity(int profiling)
     {
         LOG_DBG("PCJ_cnt: %d \n",PCJ_cnt);
         LOG_DBG("RSJ_cnt: %d \n",RSJ_cnt);
+#if QUICK_PROACTIVE == 1
+        suspicion_arr_cnt = 0;
+        if (PCJ_cnt >= RSJ_cnt)
+        {
+            LOG_INFO("PROACTIVE JAMMER SUSPICIOUS\n");
+        }
+        else
+        {
+            LOG_INFO("REACTIVE JAMMER SUSPICIOUS\n");
+        }
+        PCJ_cnt = 0;
+        RSJ_cnt = 0;
+#else
         calc_consistency();
+#endif
     }
     return suspicion_arr_cnt_temp;
 }

@@ -14,7 +14,7 @@ CFLAGS+=-DSAMPLE_AMOUNT=250 #amount of sample for one scan
 
 CFLAGS+=-DJ_D=1  #Jamming detection
 #CFLAGS+=-DJ_D=0  #interference detection
-
+CFLAGS+=-DQUICK_PROACTIVE=1  #classify constant and random jammers as PROACTIVE jammer
 
 
 #Threholds
