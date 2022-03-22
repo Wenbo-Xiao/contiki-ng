@@ -210,7 +210,7 @@ int check_similarity(int profiling)
     for (int i = 0; i < prev_num_clusters_final; i++)
     {
         /*Debug*/
-        if (1)
+        if (0)
         {
             //if (clusters[i].plevel >= 6)
             {

@@ -969,7 +969,9 @@ PROCESS_THREAD(tsch_send_eb_process, ev, data)
  * callbacks, outputs pending logs. */
 PROCESS_THREAD(tsch_pending_events_process, ev, data)
 {
+  static struct etimer timer;
   PROCESS_BEGIN();
+  etimer_set(&timer, CLOCK_SECOND * 5);
   while(1) {
     PROCESS_YIELD_UNTIL(ev == PROCESS_EVENT_POLL);
     tsch_rx_process_pending();
@@ -980,6 +982,13 @@ PROCESS_THREAD(tsch_pending_events_process, ev, data)
     TSCH_CALLBACK_SELECT_CHANNELS();
 #endif
 #if BUILD_WITH_JAMSENSE
+    if(etimer_expired(&timer) && !tsch_is_coordinator)
+    {
+      LOG_INFO("jamsense process\n");
+      etimer_reset(&timer);
+      rssi_sampler(250,26);
+      LOG_INFO("end\n");
+    }  
     specksense_process();
 #endif 
   }

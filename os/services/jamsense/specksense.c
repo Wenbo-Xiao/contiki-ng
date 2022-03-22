@@ -114,19 +114,18 @@ void rssi_sampler(int sample_amount, int channel)
 		}
 	pre_measurement_channel = channel;
 
-	int times = 0;
-	//watchdog_periodic();
-
+	//int times = 0;
+#if MAC_CONF_WITH_TSCH
+	if(!tsch_get_lock())
+	{
+		
+#endif
 	if (NETSTACK_RADIO.set_value(RADIO_PARAM_CHANNEL, channel) != RADIO_RESULT_OK)
 	{
 		//LOG_ERR("ERROR: failed to change radio channel, RSSI Sampler failed!\n");
 		sample_cnt = 0;
 	}
-#if MAC_CONF_WITH_TSCH
-	else if (tsch_get_lock())
-#else
 	else
-#endif
 	{
 		rle_ptr = rle_ptr + sample_cnt;
 		/* Need to explicitly turn on for Coojamotes */
@@ -134,13 +133,12 @@ void rssi_sampler(int sample_amount, int channel)
 		
 		while ((rle_ptr < sample_amount + sample_cnt))
 		{
-			times++;
-			/*Get RSSI value*/
+			watchdog_periodic();
 
-			/*Start time*/
 			if (NETSTACK_RADIO.get_value(RADIO_PARAM_RSSI, &rssi_val) != RADIO_RESULT_OK)
 			{
-				//LOG_ERR("ERROR: failed to get RSSI value!\n");
+				LOG_ERR("ERROR: failed to get RSSI value!\n");
+				break;
 			}
 
 			rssi_val -= 45; /* compensation offset */
@@ -184,14 +182,18 @@ void rssi_sampler(int sample_amount, int channel)
 				// if (rle_ptr == 498){}
 			}
 		}
-#if MAC_CONF_WITH_TSCH
-		tsch_release_lock();
-#endif
+
 	}
+#if MAC_CONF_WITH_TSCH
+	NETSTACK_RADIO.set_value(RADIO_PARAM_CHANNEL, tsch_current_channel);
+	tsch_release_lock();
+	}
+#endif
+
 	//LOG_INFO("This is how many times the loop looped: %d \n", times);
-	//watchdog_start();
+	watchdog_start();
 	sample_cnt = rle_ptr;
-	//LOG_INFO(" rle_ptr %d\n", rle_ptr);
+	LOG_INFO(" rle_ptr %d\n", rle_ptr);
 }
 /*---------------------------------------------------------------------------*/
 
