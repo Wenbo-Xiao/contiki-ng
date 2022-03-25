@@ -109,10 +109,30 @@ queue_init(queue_t queue)
     printf(" channel %d \n", elements[i].value);
     }
 }
-
 /*---------------------------------------------------------------------------*/
 /**
- * \brief Adds an element to the tail of the queue
+ * \brief Check if the queue contains an item
+ * \param que The que that is checked
+ * \param item A channel to look for in the que
+ * \returns    0 if the que does not contains the item, and 1 otherwise
+ *
+ *             This function searches for an item in the que and returns 
+ *			   0 if the que does not contain the item, and 1 if the item
+ *			   is present in the que.
+ */
+static inline bool
+queue_contains(queue_t queue,unsigned int channel)
+{
+  if(channel>10&&channel<30)
+  {
+	channel -= 10;
+	return list_contains(queue, &elements[channel]);
+  }
+  return false;
+}
+/*---------------------------------------------------------------------------*/
+/**
+ * \brief Adds an nonexisting element to the tail of the queue
  * \param queue The queue
  * \param channel A channel to be added
  */
@@ -121,8 +141,11 @@ queue_enqueue(queue_t queue, unsigned int channel)
 {
   if(channel>10&&channel<30)
   {
-	channel -= 10;
-	list_add(queue, &elements[channel]);
+  if(!queue_contains(queue,channel))
+	  {
+      channel -= 10;
+      list_add(queue, &elements[channel]);
+    }
   }
 }
 /*---------------------------------------------------------------------------*/
@@ -149,27 +172,7 @@ queue_peek(queue_t queue)
 {
   return list_head(queue);
 }
-/*---------------------------------------------------------------------------*/
-/**
- * \brief Check if the queue contains an item
- * \param que The que that is checked
- * \param item A channel to look for in the que
- * \returns    0 if the que does not contains the item, and 1 otherwise
- *
- *             This function searches for an item in the que and returns 
- *			   0 if the que does not contain the item, and 1 if the item
- *			   is present in the que.
- */
-static inline bool
-queue_contains(queue_t queue,unsigned int channel)
-{
-  if(channel>10&&channel<30)
-  {
-	channel -= 10;
-	return list_contains(queue, &elements[channel]);
-  }
-  return false;
-}
+
 /*---------------------------------------------------------------------------*/
 /**
  * \brief Check if a queue is empty
