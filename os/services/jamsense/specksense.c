@@ -346,10 +346,10 @@ int specksense_channel_peek(void)
   channel *this;
   this = queue_peek(jamsense_queue);
    if(this == NULL) {
-	   printf("CHANNEL 0 \n");
+	   //printf("CHANNEL 0 \n");
       return 0;
     } else {
-		printf("CHANNEL %d \n",((unsigned int)this->value));
+		//printf("CHANNEL %d \n",((unsigned int)this->value));
       return ((unsigned int)this->value);
 	  }
 }

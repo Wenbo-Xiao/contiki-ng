@@ -106,7 +106,7 @@ queue_init(queue_t queue)
     elements[i].next = NULL;
     elements[i].previous = NULL;
     elements[i].value = i+10;
-    printf(" channel %d \n", elements[i].value);
+    //printf(" channel %d \n", elements[i].value);
     }
 }
 /*---------------------------------------------------------------------------*/
