@@ -38,11 +38,12 @@
 #include "dev/serial-line.h"
 #include "specksense.h"
 #include "kmeans.h"
+#include "channel_queue.h"
 #include "cfs/cfs.h"
 #include "nrf52840_bitfields.h"
 #include "nrf52840.h"
 
-
+QUEUE(jamsense_queue);
 /*---------------------------------------------------------------------------*/
 
 /*Jamming detection, could be placed in a makefile*/
@@ -83,6 +84,8 @@ static uint16_t cidx;
 static int itr_j;
 static int current_channel = RADIO_CHANNEL;
 #endif
+
+
 
 PROCESS(specksense, "SpeckSense");
 
@@ -323,8 +326,32 @@ void init_power_levels()
 #else
 #error "Power levels should be one of the following values: 2, 4, 8, 16 or 120"
 #endif
+	queue_init(jamsense_queue);
 	// etimer_set(&jamsense_timer, CLOCK_SECOND * 3);
 	// process_start(&specksense, NULL);
+}
+/*---------------------------------------------------------------------------*/
+void specksense_channel_add(unsigned int channel)
+{
+  queue_enqueue(jamsense_queue , channel);
+}
+/*---------------------------------------------------------------------------*/
+void specksense_channel_remove(void)
+{
+  queue_dequeue(jamsense_queue);
+}
+/*---------------------------------------------------------------------------*/
+int specksense_channel_peek(void)
+{
+  channel *this;
+  this = queue_peek(jamsense_queue);
+   if(this == NULL) {
+	   printf("CHANNEL 0 \n");
+      return 0;
+    } else {
+		printf("CHANNEL %d \n",((unsigned int)this->value));
+      return ((unsigned int)this->value);
+	  }
 }
 /*---------------------------------------------------------------------------*/
 static void set_channel(void)

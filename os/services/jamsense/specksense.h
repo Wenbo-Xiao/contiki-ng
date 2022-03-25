@@ -50,6 +50,23 @@ void init_power_levels(void);
 void rssi_sampler(int sample_amount, int channel);
 
 /**
+ * \brief add channel that needs to do RSSI on to queue
+ * \param channel     channel from tsch sequence
+ */
+void specksense_channel_add(unsigned int channel);
+
+/**
+ * \brief remove first channel on queue
+ */
+void specksense_channel_remove(void);
+
+/**
+ * \brief remove channel that needs to do RSSI on to queue
+ * \retval first channel that will do RSSI, 0 if empty.
+ */
+int specksense_channel_peek(void);
+
+/**
  * \brief Runs specksense module
  */
 void specksense_process();
