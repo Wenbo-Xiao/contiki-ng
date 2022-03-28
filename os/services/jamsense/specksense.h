@@ -68,8 +68,9 @@ int specksense_channel_peek(void);
 
 /**
  * \brief Runs specksense module
+ * \retval  0 if not enough sample, 1 when running specksense successfully.
  */
-void specksense_process();
+int specksense_process();
 
 /**
  * \brief Runs jammer trigger module

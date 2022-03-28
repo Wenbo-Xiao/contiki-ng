@@ -119,7 +119,7 @@ void rssi_sampler(int sample_amount, int channel)
 
 	//int times = 0;
 #if MAC_CONF_WITH_TSCH
-	if(!tsch_get_lock())
+	//if(!tsch_get_lock())
 	{
 		
 #endif
@@ -189,7 +189,7 @@ void rssi_sampler(int sample_amount, int channel)
 	}
 #if MAC_CONF_WITH_TSCH
 	NETSTACK_RADIO.set_value(RADIO_PARAM_CHANNEL, tsch_current_channel);
-	tsch_release_lock();
+	//tsch_release_lock();
 	}
 #endif
 
@@ -402,40 +402,15 @@ PROCESS_THREAD(specksense, ev, data)
 {
 	//static rtimer_clock_t start;
 	PROCESS_BEGIN();
-	while(1)
-	{
-		PROCESS_WAIT_EVENT_UNTIL(ev == PROCESS_EVENT_POLL);
+		// PROCESS_WAIT_EVENT_UNTIL(ev == PROCESS_EVENT_POLL);
     	// etimer_reset(&jamsense_timer);
-		LOG_INFO("specksense!\n");
+		// LOG_INFO("specksense!\n");
 		//get current channel
 		//
 
 		// NETSTACK_RADIO.on();
 		// watchdog_start();
 
-
-		//
-
-		// if (sample_cnt >= RUN_LENGTH)
-		// {		
-		// 	n_clusters = kmeans(&record, rle_ptr);
-		// 	LOG_INFO("Got %d clusters!\n",n_clusters);
-		// 	if (n_clusters > 0 )
-		// 	{
-		// 		check_similarity(/*PROFILING*/ 0);
-		// 	}
-		// 	sample_cnt = 0;
-		// }
-		}
-	PROCESS_END();
-}
-/*---------------------------------------------------------------------------*/
-void specksense_process()
-{
-	//process_poll(&specksense);
-	//LOG_INFO("specksense!\n");
-	if (sample_cnt >= RUN_LENGTH)
-	{		
 		n_clusters = kmeans(&record, rle_ptr);
 		LOG_INFO("Got %d clusters!\n",n_clusters);
 		if (n_clusters > 0 )
@@ -443,8 +418,28 @@ void specksense_process()
 			check_similarity(/*PROFILING*/ 0);
 		}
 		sample_cnt = 0;
+	
+	PROCESS_END();
+}
+/*---------------------------------------------------------------------------*/
+int specksense_process()
+{
+	//process_poll(&specksense);
+	//LOG_INFO("specksense!\n");
+	if (sample_cnt >= RUN_LENGTH)
+	{		
+		//process_start(&specksense, NULL);
+		n_clusters = kmeans(&record, rle_ptr);
+		LOG_INFO("Got %d clusters!\n",n_clusters);
+		if (n_clusters > 0 )
+		{
+			check_similarity(/*PROFILING*/ 0);
+		}
+		sample_cnt = 0;
+		return 1;
 	}
 
+	return 0;
 }
 /*---------------------------------------------------------------------------*/
 void jammer_trigger_process(void)
