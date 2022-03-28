@@ -79,5 +79,10 @@ int specksense_process();
  */
 void jammer_trigger_process(void);
 
+/**
+ * \brief Runs classification module
+ * \param classification_stop_time     time to pause classification
+ */
+void classification_process(void);
 
 #endif /* __TSCH_CS_H__ */

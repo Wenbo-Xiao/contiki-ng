@@ -42,6 +42,11 @@ int check_similarity(int profiling);
  */
 void calc_consistency(void);
 
+/**
+ * @brief Function for init kmeans.
+ */
+void init_kmeans(struct record *record, int rle_ptr);
+
 /*Statistics func*/
 // void calc_profiling(void);
 // void calc_accuracy(void);

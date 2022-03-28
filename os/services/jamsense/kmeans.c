@@ -4,6 +4,7 @@
 #include "sys/rtimer.h"
 #include "sys/etimer.h"
 #include "sys/log.h"
+#include "net/mac/tsch/tsch.h"
 #define LOG_MODULE "TSCH JamSense"
 #define LOG_LEVEL LOG_LEVEL_MAC
 
@@ -39,6 +40,7 @@ static int X[RUN_LENGTH][2];
 static int K[10][2];
 static uint32_t cost;
 static int num_vectors;
+static int num_jamming_cluster;
 
 static int cluster_test, cluster_pref;
 static uint8_t vector_label[RUN_LENGTH];
@@ -117,6 +119,58 @@ void reset_kmeans(void)
     PCJ_cnt = 0;
     RSJ_cnt = 0;
     RAJ_cnt = 0;
+}
+/*---------------------------------------------------------------------------*/
+void init_kmeans(struct record *record, int rle_ptr)
+{
+    //start = RTIMER_NOW();
+    /* Initialize all variables */
+    cost = 0;
+    cluster_test = 0;
+    cluster_pref = -1;
+    record_ptr = 0;
+    plevel = 0;
+    j = 0, num_vectors = 0;
+
+    cost_final = 65535;
+    prev_cost_final = 65535;
+    diffcost_between_clusters = 65535;
+    cost_runs = 65535;
+    iter = 1;
+    num_clusters_final = 0;
+    prev_num_clusters_final = 0;
+    nruns = 0;
+    old_cost = 65535;
+    cost_diff = 0;
+
+    for (i = 0; i < 10; i++)
+    {
+        prev_K_final[i][0] = 0;
+        prev_K_final[i][1] = 0;
+        K_final[i][0] = 0;
+        K_final[i][1] = 0;
+    }
+
+    free_samples = 0;
+    busy_samples = 0;
+    if (rle_ptr == RUN_LENGTH)
+        rle_ptr--;
+
+    /*Copy pointer value to X array, discard element that POWER_LEVEL below THRESHOLD to improve perfomance*/
+    int i = 0;
+    while(i < RUN_LENGTH)
+    {
+        if(record->rssi_rle[i][0] > INTERFERENCE_POWER_LEVEL_THRESHOLD/2)
+        {
+            X[num_vectors][0] = record->rssi_rle[i][1];
+            X[num_vectors][1] = record->rssi_rle[i][0];
+            num_vectors++;
+        }
+            i++;       
+    }
+
+
+    cluster_test = 1;
 }
 /*---------------------------------------------------------------------------*/
 void bubble_sort(struct cluster_info arr[], int n, int after_size)
@@ -207,48 +261,45 @@ int check_similarity(int profiling)
         // calc_profiling();
     }
 
-    for (int i = 0; i < prev_num_clusters_final; i++)
+    for (int i = 0; i < num_jamming_cluster; i++)
     {
         /*Debug*/
         if (0)
         {
             //if (clusters[i].plevel >= 6)
             {
-                 printf("cluster %d : vector_duration: %d :", i, clusters[i].vector_duration);
-                 printf("plevel: ");
-                 printf("%d ", clusters[i].plevel);
-                 printf("num_vectors: %d\n", num_vectors);
+                LOG_INFO("vector_duration: %d :",  clusters[i].vector_duration);
+                LOG_INFO("plevel: %d ", clusters[i].plevel);
+                LOG_INFO("num_vectors: %d\n", num_vectors);
             }
 
         }
 #if QUICK_PROACTIVE == 1
-        if(clusters[i].plevel >= INTERFERENCE_POWER_LEVEL_THRESHOLD)
+
+        if (clusters[i].vector_duration >= INTERFERENCE_DURATION_SFD_MIN && clusters[i].vector_duration <= INTERFERENCE_DURATION_SFD_MAX)
         {
-            if (clusters[i].vector_duration >= INTERFERENCE_DURATION_SFD_MIN && clusters[i].vector_duration <= INTERFERENCE_DURATION_SFD_MAX)
-            {
 
-                // printf(" \n");
-                //  printf("THE REAL SFD REACTIVE INTERFERENCE JAMMER\n");
-                // printf(" \n");
-                //suspicion_vector_array[suspicion_arr_cnt] = clusters[i].vector_duration;
-                suspicion_arr_cnt++;
-                RSJ_cnt += 1;
+            // printf(" \n");
+            //  printf("THE REAL SFD REACTIVE INTERFERENCE JAMMER\n");
+            // printf(" \n");
+            //suspicion_vector_array[suspicion_arr_cnt] = clusters[i].vector_duration;
+            suspicion_arr_cnt++;
+            RSJ_cnt += 1;
 
-                break;
-            }
-            else if (clusters[i].vector_duration >= INTERFERENCE_DURATION_MID_MIN )
-            {
-                // printf(" \n");
-                //  printf("THE REAL PROACTIVE CONSTANT INTERFERENCE JAMMER\n");
-                // printf(" \n");
-                //suspicion_vector_array[suspicion_arr_cnt] = clusters[i].vector_duration;
-                suspicion_arr_cnt++;
-                PCJ_cnt += 1;
-                break;
-            }
+            break;
+        }
+        else if (clusters[i].vector_duration >= INTERFERENCE_DURATION_MID_MIN )
+        {
+            // printf(" \n");
+            //  printf("THE REAL PROACTIVE CONSTANT INTERFERENCE JAMMER\n");
+            // printf(" \n");
+            //suspicion_vector_array[suspicion_arr_cnt] = clusters[i].vector_duration;
+            suspicion_arr_cnt++;
+            PCJ_cnt += 1;
+            break;
         }
 #else
-        if (clusters[i].vector_duration >= INTERFERENCE_DURATION_PROACTIVE && clusters[i].plevel >= INTERFERENCE_POWER_LEVEL_THRESHOLD)
+        if (clusters[i].vector_duration >= INTERFERENCE_DURATION_PROACTIVE)
         {
             // printf(" \n");
             //  printf("THE REAL PROACTIVE CONSTANT INTERFERENCE JAMMER\n");
@@ -259,7 +310,7 @@ int check_similarity(int profiling)
             PCJ_cnt += 1;
             break;
         }
-        else if (clusters[i].vector_duration >= INTERFERENCE_DURATION_SFD_MIN && clusters[i].vector_duration <= INTERFERENCE_DURATION_SFD_MAX && clusters[i].plevel >= INTERFERENCE_POWER_LEVEL_THRESHOLD)
+        else if (clusters[i].vector_duration >= INTERFERENCE_DURATION_SFD_MIN && clusters[i].vector_duration <= INTERFERENCE_DURATION_SFD_MAX)
         {
 
             // printf(" \n");
@@ -271,7 +322,7 @@ int check_similarity(int profiling)
 
             break;
         }
-        else if (clusters[i].vector_duration >= INTERFERENCE_DURATION_MID_MIN && clusters[i].vector_duration <= INTERFERENCE_DURATION_MID_MAX && clusters[i].plevel >= INTERFERENCE_POWER_LEVEL_THRESHOLD)
+        else if (clusters[i].vector_duration >= INTERFERENCE_DURATION_MID_MIN && clusters[i].vector_duration <= INTERFERENCE_DURATION_MID_MAX)
         {
 
             //printf("SUS RANDOM JAMMER\n");
@@ -363,57 +414,13 @@ void burst_checker(struct record *record, int rle_ptr)
 /*---------------------------------------------------------------------------*/
 int kmeans(struct record *record, int rle_ptr)
 {
-
-    //start = RTIMER_NOW();
-    /* Initialize all variables */
-    cost = 0;
-    cluster_test = 0;
-    cluster_pref = -1;
-    record_ptr = 0;
-    plevel = 0;
-    j = 0, num_vectors = 0;
-
-    cost_final = 65535;
-    prev_cost_final = 65535;
-    diffcost_between_clusters = 65535;
-    cost_runs = 65535;
-    iter = 1;
-    num_clusters_final = 0;
-    prev_num_clusters_final = 0;
-    nruns = 0;
-    old_cost = 65535;
-    cost_diff = 0;
-
-    for (i = 0; i < 10; i++)
-    {
-        prev_K_final[i][0] = 0;
-        prev_K_final[i][1] = 0;
-        K_final[i][0] = 0;
-        K_final[i][1] = 0;
-    }
-
-    free_samples = 0;
-    busy_samples = 0;
-    if (rle_ptr == RUN_LENGTH)
-        rle_ptr--;
-
-    /*Copy pointer value to X array, discard element that POWER_LEVEL below THRESHOLD to improve perfomance*/
-    int i = 0;
-    while(i < RUN_LENGTH)
-    {
-        if(record->rssi_rle[i][0] > INTERFERENCE_POWER_LEVEL_THRESHOLD/2)
-        {
-            X[num_vectors][0] = record->rssi_rle[i][1];
-            X[num_vectors][1] = record->rssi_rle[i][0];
-            num_vectors++;
-        }
-            i++;       
-    }
-
-
-    cluster_test = 1;
     while ((cluster_test < 11) && (diffcost_between_clusters > stop_threshold))
     {
+        /* quit kmeans if doesnt have enough time */
+        if((RTIMER_NOW() + 2000) > rssi_stop_time)
+		{
+			return -1;
+		}
         //skip kmeans if no element has POWER_LEVEL exceed THRESHOLD
         if (num_vectors == 0)
         {
@@ -607,22 +614,26 @@ int kmeans(struct record *record, int rle_ptr)
             diffcost_between_clusters = cost_runs - cost_final;
             cost_final = cost_runs;
         }
-    }
+    } 
 
     if (num_clusters_final >= 1)
     {
+        num_jamming_cluster = 0;
         for (i = 0; i < prev_num_clusters_final; i++)
         {
-            clusters[i].vector_duration = prev_K_final[i][0];
-            clusters[i].plevel = prev_K_final[i][1];
-
-            if (0)
+            if(prev_K_final[i][1] > INTERFERENCE_POWER_LEVEL_THRESHOLD)
             {
-                if (clusters[i].plevel >= 6)
+                clusters[num_jamming_cluster].vector_duration = prev_K_final[i][0];
+                clusters[num_jamming_cluster].plevel = prev_K_final[i][1];
+                num_jamming_cluster++;
+            }
+            if (1)
+            {
+                if (prev_K_final[i][1] >= 6)
                 {
-                    printf("cluster %d : vector_duration: %d :", i, clusters[i].vector_duration);
+                    printf("cluster %d : vector_duration: %d :", i, prev_K_final[i][0]);
                     printf("plevel: ");
-                    printf("%d ", clusters[i].plevel);
+                    printf("%d ", prev_K_final[i][1]);
                     printf("num_vectors: %d\n", num_vectors);
                 }
                 else

@@ -55,6 +55,17 @@ PROCESS_THREAD(hello_world_process, ev, data)
   /* Setup a periodic timer that expires after 10 seconds. */
   etimer_set(&timer, CLOCK_SECOND * 2);
     PROCESS_WAIT_EVENT_UNTIL(ev == button_hal_press_event);
+    
+	init_power_levels();
+	specksense_channel_peek();
+ 	specksense_channel_add(11);
+specksense_channel_peek();
+specksense_channel_add(12);
+specksense_channel_peek();
+specksense_channel_remove();
+specksense_channel_peek();
+specksense_channel_remove();
+specksense_channel_peek();
   while(1) {
     PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
     etimer_reset(&timer);

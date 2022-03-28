@@ -64,7 +64,8 @@ QUEUE(jamsense_queue);
 /*---------------------------------------------------------------------------*/
 //! Global variables
 
-static uint16_t n_clusters;
+static int n_clusters;
+static uint16_t classification_status = 0;
 
 //! Global variables for RSSI scan
 static int rssi_val, /*rssi_valB,*/ rle_ptr = -1, /*rle_ptrB = -1,*/
@@ -85,9 +86,6 @@ static int itr_j;
 static int current_channel = RADIO_CHANNEL;
 #endif
 
-
-
-PROCESS(specksense, "SpeckSense");
 
 /*---------------------------------------------------------------------------*/
 void rssi_sampler(int sample_amount, int channel, rtimer_clock_t rssi_stop_time)
@@ -202,7 +200,7 @@ void rssi_sampler(int sample_amount, int channel, rtimer_clock_t rssi_stop_time)
 	//LOG_INFO("This is how many times the loop looped: %d \n", times);
 	watchdog_start();
 	sample_cnt = rle_ptr;
-	LOG_INFO(" rle_ptr %d\n", rle_ptr);
+	LOG_INFO("RSSI sample %d\n", sample_cnt);
 }
 /*---------------------------------------------------------------------------*/
 
@@ -404,53 +402,70 @@ PROCESS_THREAD(jammer_trigger, ev, data)
 }
 
 /*---------------------------------------------------------------------------*/
-PROCESS_THREAD(specksense, ev, data)
-{
-	//static rtimer_clock_t start;
-	PROCESS_BEGIN();
-		// PROCESS_WAIT_EVENT_UNTIL(ev == PROCESS_EVENT_POLL);
-    	// etimer_reset(&jamsense_timer);
-		// LOG_INFO("specksense!\n");
-		//get current channel
-		//
-
-		// NETSTACK_RADIO.on();
-		// watchdog_start();
-
-		n_clusters = kmeans(&record, rle_ptr);
-		LOG_INFO("Got %d clusters!\n",n_clusters);
-		if (n_clusters > 0 )
-		{
-			check_similarity(/*PROFILING*/ 0);
-		}
-		sample_cnt = 0;
-	
-	PROCESS_END();
-}
-/*---------------------------------------------------------------------------*/
-int specksense_process()
-{
-	//process_poll(&specksense);
-	//LOG_INFO("specksense!\n");
-	if (sample_cnt >= RUN_LENGTH)
-	{		
-		//process_start(&specksense, NULL);
-		n_clusters = kmeans(&record, rle_ptr);
-		LOG_INFO("Got %d clusters!\n",n_clusters);
-		if (n_clusters > 0 )
-		{
-			check_similarity(/*PROFILING*/ 0);
-		}
-		sample_cnt = 0;
-		return 1;
-	}
-
-	return 0;
-}
-/*---------------------------------------------------------------------------*/
 void jammer_trigger_process(void)
 {
   process_start(&jammer_trigger, NULL);
 }
 
+/*---------------------------------------------------------------------------*/
+PROCESS(classification, "classification process");
+PROCESS_THREAD(classification, ev, data)
+{
+	//static rtimer_clock_t start;
+	PROCESS_BEGIN();
+ 
+        classification_status = 1;
+		init_kmeans(&record, rle_ptr);
+		while(n_clusters == -1)
+		{
+			n_clusters = kmeans(&record, rle_ptr);
+			if(n_clusters == -1)
+			{
+				PROCESS_WAIT_EVENT_UNTIL(ev == PROCESS_EVENT_POLL);
+			}
+		}
+		LOG_INFO("kmeans %d clusters!\n",n_clusters);
 
+        if((RTIMER_NOW() + 4000) > rssi_stop_time)
+		{
+			PROCESS_WAIT_EVENT_UNTIL(ev == PROCESS_EVENT_POLL);
+		}
+
+		if (n_clusters > 0 )
+		{
+			check_similarity(/*PROFILING*/ 0);
+		}
+		sample_cnt = 0;
+		n_clusters = -1;
+        classification_status = 0;
+
+	PROCESS_END();
+}
+
+void classification_process()
+{
+    if(classification_status == 0)
+    {
+        process_start(&classification, NULL);
+    }
+    else
+    {
+        process_poll(&classification);
+    }
+}
+
+/*---------------------------------------------------------------------------*/
+int specksense_process()
+{
+	//LOG_INFO("specksense!\n");
+	if (sample_cnt >= RUN_LENGTH)
+	{		
+		classification_process();
+		return 1;
+	}
+	else
+	{
+		rssi_sampler(250,26,rssi_stop_time);
+		return 0;
+	}
+}
