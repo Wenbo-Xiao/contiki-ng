@@ -60,6 +60,9 @@ extern clock_time_t tsch_last_sync_time;
 /* Counts the length of the current burst */
 extern int tsch_current_burst_count;
 
+#if BUILD_WITH_JAMSENSE
+extern rtimer_clock_t rssi_stop_time;
+#endif
 /********** Functions *********/
 
 /**

@@ -90,7 +90,7 @@ static int current_channel = RADIO_CHANNEL;
 PROCESS(specksense, "SpeckSense");
 
 /*---------------------------------------------------------------------------*/
-void rssi_sampler(int sample_amount, int channel)
+void rssi_sampler(int sample_amount, int channel, rtimer_clock_t rssi_stop_time)
 {
 	/*sample_amount is the amount that is going to do, sample_cnt is the amount that already done*/
 	if(sample_amount + sample_cnt > RUN_LENGTH)
@@ -137,6 +137,12 @@ void rssi_sampler(int sample_amount, int channel)
 		while ((rle_ptr < sample_amount + sample_cnt))
 		{
 			watchdog_periodic();
+
+			/* quit rssi if doesnt have enough time */
+			if((RTIMER_NOW() + 200) > rssi_stop_time)
+			{
+				break;
+			}
 
 			if (NETSTACK_RADIO.get_value(RADIO_PARAM_RSSI, &rssi_val) != RADIO_RESULT_OK)
 			{

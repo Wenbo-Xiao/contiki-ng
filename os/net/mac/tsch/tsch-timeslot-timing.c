@@ -90,7 +90,8 @@ const tsch_timeslot_timing_usec tsch_timeslot_timing_us_10000 = {
     192, /* RxTx */
    2400, /* MaxAck */
    4256, /* MaxTx */
-  10000, /* TimeslotLength */
+  // 10000, /* TimeslotLength */
+  20000,
 };
 
 /** @} */

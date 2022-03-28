@@ -46,8 +46,10 @@ void init_power_levels(void);
 /**
  * \brief RSSI sampler stores power level and duration into 2D vector.
  * \param sample_amount     limited the sample amount to avoid getting stuck
+ * \param channel     channel to do rssion
+ * \param RSSI_time     time to stop RSSI
  */
-void rssi_sampler(int sample_amount, int channel);
+void rssi_sampler(int sample_amount, int channel, rtimer_clock_t rssi_stop_time);
 
 /**
  * \brief add channel that needs to do RSSI on to queue

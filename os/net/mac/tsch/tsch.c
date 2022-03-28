@@ -969,9 +969,8 @@ PROCESS_THREAD(tsch_send_eb_process, ev, data)
  * callbacks, outputs pending logs. */
 PROCESS_THREAD(tsch_pending_events_process, ev, data)
 {
-  static struct etimer timer;
+  rtimer_clock_t RSSI_time;
   PROCESS_BEGIN();
-  etimer_set(&timer, CLOCK_SECOND * 5);
   while(1) {
     PROCESS_YIELD_UNTIL(ev == PROCESS_EVENT_POLL);
     tsch_rx_process_pending();
@@ -982,14 +981,18 @@ PROCESS_THREAD(tsch_pending_events_process, ev, data)
     TSCH_CALLBACK_SELECT_CHANNELS();
 #endif
 #if BUILD_WITH_JAMSENSE
-    if(etimer_expired(&timer) && !tsch_is_coordinator)
+    RSSI_time = rssi_stop_time - RTIMER_NOW();
+    LOG_INFO("specksense run time %lu \n",RSSI_time);
+    if(RSSI_time > 8000)
     {
-      LOG_INFO("jamsense process\n");
-      etimer_reset(&timer);
-      rssi_sampler(250,26);
-      LOG_INFO("end\n");
+      // when there is enough samples, do kmeans. Otherwise do RSSI
+      if(!specksense_process())
+      {
+        //LOG_INFO("jamsense process\n");
+        rssi_sampler(50,26,rssi_stop_time);
+        //LOG_INFO("end\n");
+      }
     }  
-    specksense_process();
 #endif 
   }
   PROCESS_END();

@@ -109,6 +109,10 @@
 #define RTIMER_GUARD 2u
 #endif
 
+#if BUILD_WITH_JAMSENSE
+rtimer_clock_t rssi_stop_time;
+#endif
+
 enum tsch_radio_state_on_cmd {
   TSCH_RADIO_CMD_ON_START_OF_TIMESLOT,
   TSCH_RADIO_CMD_ON_WITHIN_TIMESLOT,
@@ -318,6 +322,9 @@ tsch_schedule_slot_operation(struct rtimer *tm, rtimer_clock_t ref_time, rtimer_
   } else {
     r = rtimer_set(tm, ref_time + offset, 1, (void (*)(struct rtimer *, void *))tsch_slot_operation, NULL);
     if(r == RTIMER_OK) {
+#if BUILD_WITH_JAMSENSE
+      rssi_stop_time = ref_time + offset;
+#endif
       return 1;
     }
   }
