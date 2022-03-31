@@ -285,8 +285,6 @@ int check_similarity(int profiling)
             //suspicion_vector_array[suspicion_arr_cnt] = clusters[i].vector_duration;
             suspicion_arr_cnt++;
             RSJ_cnt += 1;
-
-            break;
         }
         else if (clusters[i].vector_duration >= INTERFERENCE_DURATION_MID_MIN )
         {
@@ -296,7 +294,6 @@ int check_similarity(int profiling)
             //suspicion_vector_array[suspicion_arr_cnt] = clusters[i].vector_duration;
             suspicion_arr_cnt++;
             PCJ_cnt += 1;
-            break;
         }
 #else
         if (clusters[i].vector_duration >= INTERFERENCE_DURATION_PROACTIVE)
@@ -308,7 +305,6 @@ int check_similarity(int profiling)
             suspicion_vector_array[suspicion_arr_cnt] = clusters[i].vector_duration;
             suspicion_arr_cnt++;
             PCJ_cnt += 1;
-            break;
         }
         else if (clusters[i].vector_duration >= INTERFERENCE_DURATION_SFD_MIN && clusters[i].vector_duration <= INTERFERENCE_DURATION_SFD_MAX)
         {
@@ -319,8 +315,6 @@ int check_similarity(int profiling)
             suspicion_vector_array[suspicion_arr_cnt] = clusters[i].vector_duration;
             suspicion_arr_cnt++;
             RSJ_cnt += 1;
-
-            break;
         }
         else if (clusters[i].vector_duration >= INTERFERENCE_DURATION_MID_MIN && clusters[i].vector_duration <= INTERFERENCE_DURATION_MID_MAX)
         {
@@ -332,7 +326,7 @@ int check_similarity(int profiling)
 #endif
     }
     int suspicion_arr_cnt_temp = suspicion_arr_cnt;
-    LOG_INFO("suspicion_arr_cnt: %d \n",suspicion_arr_cnt);
+    //LOG_INFO("suspicion_arr_cnt: %d \n",suspicion_arr_cnt);
    
     if (suspicion_arr_cnt >= INTERFERENCE_NUMBER_SAMPLES)
     {
@@ -621,26 +615,23 @@ int kmeans(struct record *record, int rle_ptr)
         num_jamming_cluster = 0;
         for (i = 0; i < prev_num_clusters_final; i++)
         {
-            if(prev_K_final[i][1] > INTERFERENCE_POWER_LEVEL_THRESHOLD)
+            if(prev_K_final[i][1] >= INTERFERENCE_POWER_LEVEL_THRESHOLD)
             {
                 clusters[num_jamming_cluster].vector_duration = prev_K_final[i][0];
                 clusters[num_jamming_cluster].plevel = prev_K_final[i][1];
                 num_jamming_cluster++;
             }
-            if (1)
-            {
-                if (prev_K_final[i][1] >= 6)
-                {
-                    printf("cluster %d : vector_duration: %d :", i, prev_K_final[i][0]);
-                    printf("plevel: ");
-                    printf("%d ", prev_K_final[i][1]);
-                    printf("num_vectors: %d\n", num_vectors);
-                }
-                else
-                {
-                    // printf("cluster %d : vector_duration: %d : plevel: %d num_vectors: %d\n", i, clusters[i].vector_duration, clusters[i].plevel, num_vectors);
-                }
-            }
+            LOG_INFO("cluster %d : vector_duration: %d plevel: %d \n", i, prev_K_final[i][0], prev_K_final[i][1]);
+            // if (0)
+            // {
+            //     if (prev_K_final[i][1] >= 6)
+            //     {
+            //         printf("cluster %d : vector_duration: %d :", i, prev_K_final[i][0]);
+            //         printf("plevel: ");
+            //         printf("%d ", prev_K_final[i][1]);
+            //         printf("num_vectors: %d\n", num_vectors);
+            //     }
+            // }
         }
     }
 
@@ -651,7 +642,7 @@ int kmeans(struct record *record, int rle_ptr)
     //func_times++;
     //printf("End time tot: %ld, end time tot converted: %ld avg_time/func %ld avg_time %ld func_times %d (avg_time/func_times)/62500 %ld\n", end_time, RTIMERTICKS_TO_US_64(end-start),avg_time/func_times, avg_time, func_times, (avg_time/func_times)/62500);
 
-    return prev_num_clusters_final;
+    return num_jamming_cluster;
 }
 /*---------------------------------------------------------------------------*/
 

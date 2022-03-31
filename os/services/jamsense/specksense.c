@@ -160,6 +160,13 @@ void rssi_sampler(int sample_amount, int channel, rtimer_clock_t rssi_stop_time)
 			/*Power level most be higher than one */
 			if (rssi_levels[-debug_rssi - 1] > 1)
 			{
+#if QUICK_PROACTIVE == 1
+				// Avoid energy fluctuations	
+				if(abs_diff(rssi_levels[-rssi_val - 1], record.rssi_rle[rle_ptr][0]) < 2)
+				{
+					rssi_levels[rssi_val_mod] = record.rssi_rle[rle_ptr][0];
+				}
+#endif
 				cond = 0x01 & ((record.rssi_rle[rle_ptr][0] != rssi_levels[-rssi_val - 1]) | (record.rssi_rle[rle_ptr][1] == 32767));
 
 				/*Max_duration achieved, move to next value*/

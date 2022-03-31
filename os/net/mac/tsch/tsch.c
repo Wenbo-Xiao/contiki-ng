@@ -982,7 +982,7 @@ PROCESS_THREAD(tsch_pending_events_process, ev, data)
 #endif
 #if BUILD_WITH_JAMSENSE
     RSSI_time = rssi_stop_time - RTIMER_NOW();
-    LOG_INFO("specksense run time %lu \n",RSSI_time);
+    //LOG_INFO("specksense run time %lu \n",RSSI_time);
     if(RSSI_time > 5000)
     {
       // when there is enough samples, do kmeans. Otherwise do RSSI
