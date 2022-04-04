@@ -68,7 +68,7 @@ static int n_clusters;
 static uint16_t classification_status = 0;
 
 //! Global variables for RSSI scan
-static int rssi_val, /*rssi_valB,*/ rle_ptr = -1, /*rle_ptrB = -1,*/
+static int rssi_val, /*rssi_valB,*/ rle_ptr = -1, /*rle_ptrB = -1,*/ pre_rssi_val = 0, /*previous rssi_valB,*/
  		   cond, itr,
 		   rssi_val_mod;
 
@@ -79,6 +79,7 @@ static struct record record;
 static int packet_cnt = 0;
 static int sample_cnt = 0;
 static uint8_t pre_measurement_channel = 0;
+static uint8_t specksense_loop = 0;
 
 #if CHANNEL_METRIC == 2
 static uint16_t cidx;
@@ -111,7 +112,7 @@ void rssi_sampler(int sample_amount, int channel, rtimer_clock_t rssi_stop_time)
 		{
 			sample_cnt = 0;
 			reset_kmeans();
-			//LOG_INFO("channel changed to %d, reset specksense!\n",channel);
+			LOG_INFO("channel changed to %d, reset specksense!\n",channel);
 		}
 	pre_measurement_channel = channel;
 
@@ -161,11 +162,12 @@ void rssi_sampler(int sample_amount, int channel, rtimer_clock_t rssi_stop_time)
 			if (rssi_levels[-debug_rssi - 1] > 1)
 			{
 #if QUICK_PROACTIVE == 1
-				// Avoid energy fluctuations	
-				if(abs_diff(rssi_levels[-rssi_val - 1], record.rssi_rle[rle_ptr][0]) < 2)
+				// Avoid energy fluctuations, may need to be fine-tuned	
+				if(abs_diff(rssi_val, pre_rssi_val) < 4)
 				{
 					rssi_levels[rssi_val_mod] = record.rssi_rle[rle_ptr][0];
 				}
+				pre_rssi_val = rssi_val;
 #endif
 				cond = 0x01 & ((record.rssi_rle[rle_ptr][0] != rssi_levels[-rssi_val - 1]) | (record.rssi_rle[rle_ptr][1] == 32767));
 
@@ -432,7 +434,7 @@ PROCESS_THREAD(classification, ev, data)
 			}
 		}
 		LOG_INFO("kmeans %d clusters!\n",n_clusters);
-
+		specksense_loop++;
         if((RTIMER_NOW() + 4000) > rssi_stop_time)
 		{
 			PROCESS_WAIT_EVENT_UNTIL(ev == PROCESS_EVENT_POLL);
@@ -440,12 +442,24 @@ PROCESS_THREAD(classification, ev, data)
 
 		if (n_clusters > 0 )
 		{
-			check_similarity(/*PROFILING*/ 0);
+			//if find jammer, remove channel
+			if(check_similarity(/*PROFILING*/ 0))
+			{
+				specksense_loop = 0;
+				specksense_channel_remove();
+			}
 		}
 		sample_cnt = 0;
 		n_clusters = -1;
         classification_status = 0;
 
+		//if havent found jammer within 10 specksense loop, remove channel
+		if(specksense_loop > 9)
+		{
+			specksense_loop = 0;
+			specksense_channel_remove();
+		}
+		
 	PROCESS_END();
 }
 
@@ -465,6 +479,7 @@ void classification_process()
 int specksense_process()
 {
 	//LOG_INFO("specksense!\n");
+	//When there is enough samples, do kmeans. Otherwise do RSSI
 	if (sample_cnt >= RUN_LENGTH)
 	{		
 		classification_process();
@@ -472,7 +487,15 @@ int specksense_process()
 	}
 	else
 	{
-		rssi_sampler(250,26,rssi_stop_time);
+#if MAC_CONF_WITH_TSCH
+		int channel_rssi = specksense_channel_peek();
+		if (channel_rssi != 0)
+		{
+			rssi_sampler(SAMPLE_AMOUNT,channel_rssi,rssi_stop_time);
+		}
+#else
+		rssi_sampler(SAMPLE_AMOUNT,26,rssi_stop_time);
+#endif
 		return 0;
 	}
 }

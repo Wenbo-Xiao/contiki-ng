@@ -985,9 +985,7 @@ PROCESS_THREAD(tsch_pending_events_process, ev, data)
     //LOG_INFO("specksense run time %lu \n",RSSI_time);
     if(RSSI_time > 5000)
     {
-      // when there is enough samples, do kmeans. Otherwise do RSSI
       specksense_process();
-
     }  
 #endif 
   }

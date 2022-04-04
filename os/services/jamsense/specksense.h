@@ -44,8 +44,8 @@
 void init_power_levels(void);
     
 /**
- * \brief RSSI sampler stores power level and duration into 2D vector.
- * \param sample_amount     limited the sample amount to avoid getting stuck
+ * \brief RSSI sampler stores power level and duration into 2D vector, will stop if time is not enough for another sample.
+ * \param sample_amount     limited the maximum sample amount to avoid getting stuck
  * \param channel     channel to do rssion
  * \param RSSI_time     time to stop RSSI
  */
@@ -70,7 +70,8 @@ int specksense_channel_peek(void);
 
 /**
  * \brief Runs specksense module
- * \retval  0 if not enough sample, 1 when running specksense successfully.
+ * \retval  return 0 if not enough sample; 
+ *          return 1 if having enough sample, do classification. And sample will be cleared if classification is done.
  */
 int specksense_process();
 
@@ -81,7 +82,6 @@ void jammer_trigger_process(void);
 
 /**
  * \brief Runs classification module
- * \param classification_stop_time     time to pause classification
  */
 void classification_process(void);
 

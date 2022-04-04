@@ -739,6 +739,13 @@ PT_THREAD(tsch_tx_slot(struct pt *pt, struct rtimer *t))
       tsch_stats_tx_packet(current_neighbor, mac_tx_status, tsch_current_channel);
     }
 
+#if BUILD_WITH_JAMSENSE
+    if (current_packet->transmissions > 1)
+    {
+      specksense_channel_add(tsch_current_channel);
+    }
+#endif
+
     /* Log every tx attempt */
     TSCH_LOG_ADD(tsch_log_tx,
         log->tx.mac_tx_status = mac_tx_status;
