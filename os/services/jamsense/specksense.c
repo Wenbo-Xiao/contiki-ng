@@ -68,7 +68,8 @@ static int n_clusters;
 static uint16_t classification_status = 0;
 
 //! Global variables for RSSI scan
-static int rssi_val, /*rssi_valB,*/ rle_ptr = -1, /*rle_ptrB = -1,*/ pre_rssi_val = 0, /*previous rssi_valB,*/
+static int rssi_val, /*rssi_valB,*/ rle_ptr = -1, /*rle_ptrB = -1,*/
+		   pre_rssi_val = 0, /*previous rssi_valB,*/
  		   cond, itr,
 		   rssi_val_mod;
 
@@ -163,11 +164,14 @@ void rssi_sampler(int sample_amount, int channel, rtimer_clock_t rssi_stop_time)
 			{
 #if QUICK_PROACTIVE == 1
 				// Avoid energy fluctuations, may need to be fine-tuned	
-				if(abs_diff(rssi_val, pre_rssi_val) < 4)
+				if(rssi_levels[-debug_rssi - 1] > INTERFERENCE_POWER_LEVEL_THRESHOLD && (rssi_val - pre_rssi_val) < 3 && (rssi_val - pre_rssi_val) > -3)
 				{
-					rssi_levels[rssi_val_mod] = record.rssi_rle[rle_ptr][0];
+					rssi_val = pre_rssi_val;
 				}
-				pre_rssi_val = rssi_val;
+				else
+				{
+					pre_rssi_val = rssi_val;
+				}		
 #endif
 				cond = 0x01 & ((record.rssi_rle[rle_ptr][0] != rssi_levels[-rssi_val - 1]) | (record.rssi_rle[rle_ptr][1] == 32767));
 

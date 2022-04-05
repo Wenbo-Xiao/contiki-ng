@@ -4,6 +4,7 @@
 #include "sys/rtimer.h"
 #include "sys/etimer.h"
 #include "sys/log.h"
+#include "specksense.h"
 #include "net/mac/tsch/tsch.h"
 #define LOG_MODULE "TSCH JamSense"
 #define LOG_LEVEL LOG_LEVEL_MAC
@@ -336,11 +337,11 @@ int check_similarity(int profiling)
         suspicion_arr_cnt = 0;
         if (PCJ_cnt >= RSJ_cnt)
         {
-            LOG_INFO("PROACTIVE JAMMER SUSPICIOUS\n");
+            LOG_INFO("CH%d: PROACTIVE JAMMER SUSPICIOUS\n",specksense_channel_peek());
         }
         else
         {
-            LOG_INFO("REACTIVE JAMMER SUSPICIOUS\n");
+            LOG_INFO("CH%d: REACTIVE JAMMER SUSPICIOUS\n",specksense_channel_peek());
         }
         PCJ_cnt = 0;
         RSJ_cnt = 0;
@@ -621,17 +622,15 @@ int kmeans(struct record *record, int rle_ptr)
                 clusters[num_jamming_cluster].plevel = prev_K_final[i][1];
                 num_jamming_cluster++;
             }
-            LOG_INFO("cluster %d : vector_duration: %d plevel: %d \n", i, prev_K_final[i][0], prev_K_final[i][1]);
-            // if (0)
-            // {
-            //     if (prev_K_final[i][1] >= 6)
-            //     {
-            //         printf("cluster %d : vector_duration: %d :", i, prev_K_final[i][0]);
-            //         printf("plevel: ");
-            //         printf("%d ", prev_K_final[i][1]);
-            //         printf("num_vectors: %d\n", num_vectors);
-            //     }
-            // }
+
+            //for dubugging print
+            if (1)
+            {
+                if (prev_K_final[i][1] >= 13)
+                {
+                    LOG_INFO("cluster %d : vector_duration: %d plevel: %d \n", i, prev_K_final[i][0], prev_K_final[i][1]);
+                }
+            }
         }
     }
 
