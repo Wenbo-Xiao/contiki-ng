@@ -441,6 +441,8 @@ by default, useful in case of duplicate seqno */
 /* TSCH timeslot timing template */
 #ifdef TSCH_CONF_DEFAULT_TIMESLOT_TIMING
 #define TSCH_DEFAULT_TIMESLOT_TIMING TSCH_CONF_DEFAULT_TIMESLOT_TIMING
+#elif BUILD_WITH_JAMSENSE
+#define TSCH_DEFAULT_TIMESLOT_TIMING tsch_timeslot_timing_us_20000
 #else
 #define TSCH_DEFAULT_TIMESLOT_TIMING tsch_timeslot_timing_us_10000
 #endif

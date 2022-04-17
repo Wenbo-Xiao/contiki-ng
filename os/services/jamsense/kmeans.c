@@ -334,14 +334,17 @@ int check_similarity(int profiling)
         LOG_DBG("PCJ_cnt: %d \n",PCJ_cnt);
         LOG_DBG("RSJ_cnt: %d \n",RSJ_cnt);
 #if QUICK_PROACTIVE == 1
+        int jammer_channel = specksense_channel_peek();
         suspicion_arr_cnt = 0;
         if (PCJ_cnt >= RSJ_cnt)
         {
-            LOG_INFO("CH%d: PROACTIVE JAMMER SUSPICIOUS\n",specksense_channel_peek());
+            LOG_INFO("CH%d: PROACTIVE JAMMER SUSPICIOUS\n",jammer_channel);
+            update_jammer_status(jammer_channel,1);
         }
         else
         {
-            LOG_INFO("CH%d: REACTIVE JAMMER SUSPICIOUS\n",specksense_channel_peek());
+            LOG_INFO("CH%d: REACTIVE JAMMER SUSPICIOUS\n",jammer_channel);
+            update_jammer_status(jammer_channel,2);
         }
         PCJ_cnt = 0;
         RSJ_cnt = 0;

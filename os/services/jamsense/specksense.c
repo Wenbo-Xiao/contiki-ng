@@ -60,7 +60,7 @@ QUEUE(jamsense_queue);
 #else
 #define MAX_DURATION 1000
 #endif
-
+#define tick_minute RTIMER_SECOND*60
 /*---------------------------------------------------------------------------*/
 //! Global variables
 
@@ -88,7 +88,56 @@ static int itr_j;
 static int current_channel = RADIO_CHANNEL;
 #endif
 
+/*---------------------------------------------------------------------------*/
+/**
+ * \brief The jammer data type
+ */
+typedef struct jammer {
+  int type;   //1 for proactive jammer; 2 for reactive jammer
+  rtimer_clock_t time; //time when when jammer classified
+} jammer;
 
+//mapping from channel 10-30 to buffer 0-20
+static jammer jammer_queue[CHANNEL_SEQUENCE_AMOUNT];
+/*---------------------------------------------------------------------------*/
+static void init_jammer_queue()
+{
+	int i;
+	for(i = 0; i < CHANNEL_SEQUENCE_AMOUNT; i++) 
+	{
+    	jammer_queue[i].type = 0;
+		jammer_queue[i].time = 0;
+    }
+}
+/*---------------------------------------------------------------------------*/
+void update_jammer_status(int channel, int type)
+{
+	channel = channel - 10;
+	jammer_queue[channel].type = type;
+	jammer_queue[channel].time = RTIMER_NOW();
+}
+/*---------------------------------------------------------------------------*/
+static bool check_jammer_status(int channel)
+{
+	channel = channel - 10;
+	if(RTIMER_NOW() - jammer_queue[channel].time > tick_minute || jammer_queue[channel].type == 0)
+	{
+		return true;
+	}
+	else
+	{
+		if(jammer_queue[channel].type == 1)
+		{
+			LOG_INFO("CH%d: PROACTIVE JAMMER SUSPICIOUS\n",specksense_channel_peek());
+		}
+		else if (jammer_queue[channel].type == 2)
+		{
+			LOG_INFO("CH%d: REACTIVE JAMMER SUSPICIOUS\n",specksense_channel_peek());
+		}
+		specksense_channel_remove();
+		return false;
+	}
+}
 /*---------------------------------------------------------------------------*/
 void rssi_sampler(int sample_amount, int channel, rtimer_clock_t rssi_stop_time)
 {
@@ -344,6 +393,7 @@ void init_power_levels()
 #error "Power levels should be one of the following values: 2, 4, 8, 16 or 120"
 #endif
 	queue_init(jamsense_queue);
+	init_jammer_queue();
 	// etimer_set(&jamsense_timer, CLOCK_SECOND * 3);
 	// process_start(&specksense, NULL);
 }
@@ -493,7 +543,7 @@ int specksense_process()
 	{
 #if MAC_CONF_WITH_TSCH
 		int channel_rssi = specksense_channel_peek();
-		if (channel_rssi != 0)
+		if (channel_rssi != 0 && check_jammer_status(channel_rssi))
 		{
 			rssi_sampler(SAMPLE_AMOUNT,channel_rssi,rssi_stop_time);
 		}

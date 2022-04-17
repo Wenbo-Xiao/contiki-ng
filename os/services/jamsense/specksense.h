@@ -36,7 +36,12 @@
 
 #ifndef SPECKSENSE_H__
 #define SPECKSENSE_H__
-
+/**
+ * \brief update time and type for jammer in the channel
+ * \param channel     jammer channel
+ * \param type     jammer type
+ */
+void update_jammer_status(int channel, int type);
 
 /**
  * \brief Initializes the rssi quantization levels.

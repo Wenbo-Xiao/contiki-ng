@@ -90,8 +90,23 @@ const tsch_timeslot_timing_usec tsch_timeslot_timing_us_10000 = {
     192, /* RxTx */
    2400, /* MaxAck */
    4256, /* MaxTx */
-  // 10000, /* TimeslotLength */
-  20000,
+  10000, /* TimeslotLength */
 };
-
-/** @} */
+/**
+ * 20ms TSCH timeslot timings, required for jamsense as
+ * it might not have enough time with the defulat 10ms timeslots.
+ */
+const tsch_timeslot_timing_usec tsch_timeslot_timing_us_20000 = {
+   1800, /* CCAOffset */
+    128, /* CCA */
+   2120, /* TxOffset */
+  (2120 - (TSCH_CONF_RX_WAIT / 2)), /* RxOffset */
+    800, /* RxAckDelay */
+   1000, /* TxAckDelay */
+  TSCH_CONF_RX_WAIT, /* RxWait */
+    400, /* AckWait */
+    192, /* RxTx */
+   2400, /* MaxAck */
+   4256, /* MaxTx */
+  20000, /* TimeslotLength */
+};
