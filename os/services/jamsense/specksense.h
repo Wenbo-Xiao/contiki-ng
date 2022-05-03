@@ -36,6 +36,9 @@
 
 #ifndef SPECKSENSE_H__
 #define SPECKSENSE_H__
+
+extern rtimer_clock_t rssi_stop_time;
+
 /**
  * \brief update time and type for jammer in the channel
  * \param channel     jammer channel

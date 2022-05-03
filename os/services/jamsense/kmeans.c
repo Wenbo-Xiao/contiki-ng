@@ -631,7 +631,7 @@ int kmeans(struct record *record, int rle_ptr)
             {
                 if (prev_K_final[i][1] >= 13)
                 {
-                    LOG_INFO("cluster %d : vector_duration: %d plevel: %d \n", i, prev_K_final[i][0], prev_K_final[i][1]);
+                    printf("cluster %d : vector_duration: %d plevel: %d \n", i, prev_K_final[i][0], prev_K_final[i][1]);
                 }
             }
         }

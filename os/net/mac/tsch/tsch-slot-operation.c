@@ -109,9 +109,6 @@
 #define RTIMER_GUARD 2u
 #endif
 
-#if BUILD_WITH_JAMSENSE
-rtimer_clock_t rssi_stop_time;
-#endif
 
 enum tsch_radio_state_on_cmd {
   TSCH_RADIO_CMD_ON_START_OF_TIMESLOT,

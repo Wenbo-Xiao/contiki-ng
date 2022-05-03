@@ -88,6 +88,8 @@ static int itr_j;
 static int current_channel = RADIO_CHANNEL;
 #endif
 
+rtimer_clock_t rssi_stop_time;
+
 /*---------------------------------------------------------------------------*/
 /**
  * \brief The jammer data type
@@ -548,7 +550,17 @@ int specksense_process()
 			rssi_sampler(SAMPLE_AMOUNT,channel_rssi,rssi_stop_time);
 		}
 #else
-		rssi_sampler(SAMPLE_AMOUNT,26,rssi_stop_time);
+		rssi_stop_time = RTIMER_NOW() + 100000;
+		specksense_channel_add(26);
+		int channel_rssi = specksense_channel_peek();
+		if (channel_rssi != 0)
+		{
+			rssi_sampler(SAMPLE_AMOUNT,channel_rssi,rssi_stop_time);
+		}
+		if(0)
+		{
+			check_jammer_status(channel_rssi);
+		}
 #endif
 		return 0;
 	}

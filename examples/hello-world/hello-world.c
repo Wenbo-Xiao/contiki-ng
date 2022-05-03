@@ -48,39 +48,39 @@ AUTOSTART_PROCESSES(&hello_world_process);
 /*---------------------------------------------------------------------------*/
 PROCESS_THREAD(hello_world_process, ev, data)
 {
-  //static rtimer_clock_t start;
+  static rtimer_clock_t start;
   static struct etimer timer;
-  //static int  loop=0;
+  static int  loop=1;
   PROCESS_BEGIN();
   /* Setup a periodic timer that expires after 10 seconds. */
   etimer_set(&timer, CLOCK_SECOND * 2);
     PROCESS_WAIT_EVENT_UNTIL(ev == button_hal_press_event);
     
-	init_power_levels();
-	specksense_channel_peek();
- 	specksense_channel_add(11);
-specksense_channel_peek();
-specksense_channel_add(12);
-specksense_channel_peek();
-specksense_channel_remove();
-specksense_channel_peek();
-specksense_channel_remove();
-specksense_channel_peek();
+// 	init_power_levels();
+// 	specksense_channel_peek();
+//  	specksense_channel_add(11);
+// specksense_channel_peek();
+// specksense_channel_add(12);
+// specksense_channel_peek();
+// specksense_channel_remove();
+// specksense_channel_peek();
+// specksense_channel_remove();
+// specksense_channel_peek();
   while(1) {
     PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
     etimer_reset(&timer);
     
-    /* Wait for the periodic timer to expire and then restart the timer. 
+    /* Wait for the periodic timer to expire and then restart the timer. */
     
     start = RTIMER_NOW();
-    rssi_sampler(250,26);
+    specksense_process();
     printf("rssi_sampler time %lu \n",RTIMER_NOW() - start);
     start = RTIMER_NOW();
     specksense_process();
     printf("classification time time %lu \n",RTIMER_NOW() - start);
     loop++;
     printf("loop : %d \n",loop);
-    if(loop > 200) break;*/
+    if(loop >= 200) break;
   }
 
   PROCESS_END();
