@@ -969,7 +969,9 @@ PROCESS_THREAD(tsch_send_eb_process, ev, data)
  * callbacks, outputs pending logs. */
 PROCESS_THREAD(tsch_pending_events_process, ev, data)
 {
+  #if BUILD_WITH_JAMSENSE
   rtimer_clock_t RSSI_time;
+  #endif 
   PROCESS_BEGIN();
   while(1) {
     PROCESS_YIELD_UNTIL(ev == PROCESS_EVENT_POLL);
@@ -977,6 +979,7 @@ PROCESS_THREAD(tsch_pending_events_process, ev, data)
     tsch_tx_process_pending();
     tsch_log_process_pending();
     tsch_keepalive_process_pending();
+    tsch_slot_rssi_pending();
 #ifdef TSCH_CALLBACK_SELECT_CHANNELS
     TSCH_CALLBACK_SELECT_CHANNELS();
 #endif

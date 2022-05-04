@@ -131,6 +131,11 @@ struct tsch_packet *dequeued_array[TSCH_DEQUEUED_ARRAY_SIZE];
 struct ringbufindex input_ringbuf;
 struct input_packet input_array[TSCH_MAX_INCOMING_PACKETS];
 
+/* A buf storing rssi value.
+ * Will be processed later in tsch_pending_events_process */
+static int rssi_val_buf[10000]; 
+static uint16_t rssi_val_count = 0;
+
 /* Updates and reads of the next two variables must be atomic (i.e. both together) */
 /* Last time we received Sync-IE (ACK or data packet from a time source) */
 static struct tsch_asn_t last_sync_asn;
@@ -831,8 +836,12 @@ PT_THREAD(tsch_rx_slot(struct pt *pt, struct rtimer *t))
       rx_start_time = RTIMER_NOW() - RADIO_DELAY_BEFORE_DETECT;
 
       /* Wait until packet is received, turn radio off */
-      RTIMER_BUSYWAIT_UNTIL_ABS(!NETSTACK_RADIO.receiving_packet(),
-          current_slot_start, tsch_timing[tsch_ts_rx_offset] + tsch_timing[tsch_ts_rx_wait] + tsch_timing[tsch_ts_max_tx]);
+
+      // RTIMER_BUSYWAIT_UNTIL_ABS(!NETSTACK_RADIO.receiving_packet(),
+      //     current_slot_start, tsch_timing[tsch_ts_rx_offset] + tsch_timing[tsch_ts_rx_wait] + tsch_timing[tsch_ts_max_tx]);
+      RTIMER_BUSYWAIT_UNTIL_ABS_RSSI(!NETSTACK_RADIO.receiving_packet(), 
+        current_slot_start, tsch_timing[tsch_ts_rx_offset] + tsch_timing[tsch_ts_rx_wait] + tsch_timing[tsch_ts_max_tx],tsch_slot_rssi_sampler);
+
       TSCH_DEBUG_RX_EVENT();
       tsch_radio_off(TSCH_RADIO_CMD_OFF_WITHIN_TIMESLOT);
 
@@ -1219,6 +1228,31 @@ tsch_slot_operation_sync(rtimer_clock_t next_slot_start,
   tsch_last_sync_time = clock_time();
   critical_exit(status);
   current_link = NULL;
+}
+/*---------------------------------------------------------------------------*/
+/* Collect RSSI durring RX */
+
+void
+tsch_slot_rssi_sampler()
+{
+  NETSTACK_RADIO.get_value(RADIO_PARAM_RSSI,  &rssi_val_buf[rssi_val_count]);
+  rssi_val_count++;
+}
+/*---------------------------------------------------------------------------*/
+/* process RSSI value in pending process */
+void
+tsch_slot_rssi_pending()
+{
+  int i;
+  for(i=0; i<rssi_val_count; i++)
+  {
+    printf("%d ",rssi_val_buf[i]);
+    if(i%10 == 0)
+    {
+      printf("\n");
+    }
+  }
+  rssi_val_count = 0;
 }
 /*---------------------------------------------------------------------------*/
 /** @} */

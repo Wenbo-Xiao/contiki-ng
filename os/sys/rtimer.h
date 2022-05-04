@@ -207,6 +207,16 @@ void rtimer_run_next(void);
   })
 #endif /* RTIMER_BUSYWAIT_UNTIL_ABS */
 
+/** \brief Doing RSSI sampling until a condition. Start time is t0, max wait time is max_time */
+#define RTIMER_BUSYWAIT_UNTIL_ABS_RSSI(cond, t0, max_time, rssi_func) \
+({ \
+bool c; \
+while(!(c = cond) && RTIMER_CLOCK_LT(RTIMER_NOW(), (t0) + (max_time))) { \
+rssi_func; \
+} \
+c; \
+})
+
 /** \brief Busy-wait until a condition for at most max_time */
 #define RTIMER_BUSYWAIT_UNTIL(cond, max_time)       \
   ({                                                \

@@ -66,13 +66,15 @@ PROCESS_THREAD(hello_world_process, ev, data)
 // specksense_channel_peek();
 // specksense_channel_remove();
 // specksense_channel_peek();
-  while(1) {
+  
+/*
+while(1) {
     PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
     etimer_reset(&timer);
     
     /* Wait for the periodic timer to expire and then restart the timer. */
     
-    start = RTIMER_NOW();
+    /*start = RTIMER_NOW();
     specksense_process();
     printf("rssi_sampler time %lu \n",RTIMER_NOW() - start);
     start = RTIMER_NOW();
@@ -81,7 +83,7 @@ PROCESS_THREAD(hello_world_process, ev, data)
     loop++;
     printf("loop : %d \n",loop);
     if(loop >= 200) break;
-  }
+  }*/
 
   PROCESS_END();
 }
