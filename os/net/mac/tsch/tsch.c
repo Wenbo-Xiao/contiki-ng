@@ -979,7 +979,10 @@ PROCESS_THREAD(tsch_pending_events_process, ev, data)
     tsch_tx_process_pending();
     tsch_log_process_pending();
     tsch_keepalive_process_pending();
-    tsch_slot_rssi_pending();
+    if(!tsch_is_coordinator)
+    {
+      tsch_slot_rssi_pending();
+    }
 #ifdef TSCH_CALLBACK_SELECT_CHANNELS
     TSCH_CALLBACK_SELECT_CHANNELS();
 #endif

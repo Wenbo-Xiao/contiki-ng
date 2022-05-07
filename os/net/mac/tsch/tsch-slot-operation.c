@@ -836,11 +836,16 @@ PT_THREAD(tsch_rx_slot(struct pt *pt, struct rtimer *t))
       rx_start_time = RTIMER_NOW() - RADIO_DELAY_BEFORE_DETECT;
 
       /* Wait until packet is received, turn radio off */
-
-      // RTIMER_BUSYWAIT_UNTIL_ABS(!NETSTACK_RADIO.receiving_packet(),
-      //     current_slot_start, tsch_timing[tsch_ts_rx_offset] + tsch_timing[tsch_ts_rx_wait] + tsch_timing[tsch_ts_max_tx]);
-      RTIMER_BUSYWAIT_UNTIL_ABS_RSSI(!NETSTACK_RADIO.receiving_packet(), 
-        current_slot_start, tsch_timing[tsch_ts_rx_offset] + tsch_timing[tsch_ts_rx_wait] + tsch_timing[tsch_ts_max_tx],tsch_slot_rssi_sampler);
+      if(tsch_is_coordinator)
+      {
+        RTIMER_BUSYWAIT_UNTIL_ABS(!NETSTACK_RADIO.receiving_packet(),
+          current_slot_start, tsch_timing[tsch_ts_rx_offset] + tsch_timing[tsch_ts_rx_wait] + tsch_timing[tsch_ts_max_tx]);
+      }
+      else
+      {
+        RTIMER_BUSYWAIT_UNTIL_ABS_RSSI(!NETSTACK_RADIO.receiving_packet(), 
+          current_slot_start, tsch_timing[tsch_ts_rx_offset] + tsch_timing[tsch_ts_rx_wait] + tsch_timing[tsch_ts_max_tx],tsch_slot_rssi_sampler);
+      }
 
       TSCH_DEBUG_RX_EVENT();
       tsch_radio_off(TSCH_RADIO_CMD_OFF_WITHIN_TIMESLOT);
@@ -1235,21 +1240,32 @@ tsch_slot_operation_sync(rtimer_clock_t next_slot_start,
 void
 tsch_slot_rssi_sampler()
 {
-  NETSTACK_RADIO.get_value(RADIO_PARAM_RSSI,  &rssi_val_buf[rssi_val_count]);
-  rssi_val_count++;
+  if(rssi_val_count<10000)
+  {
+    NETSTACK_RADIO.get_value(RADIO_PARAM_RSSI,  &rssi_val_buf[rssi_val_count]);
+    rssi_val_count++;
+  }
 }
 /*---------------------------------------------------------------------------*/
 /* process RSSI value in pending process */
 void
 tsch_slot_rssi_pending()
 {
-  int i;
+  int i,
+   rssi_val, pre_rssi_val = 0, 
+   tick = 1;
   for(i=0; i<rssi_val_count; i++)
   {
-    printf("%d ",rssi_val_buf[i]);
-    if(i%10 == 0)
+    rssi_val = rssi_val_buf[i];
+    if((rssi_val - pre_rssi_val) < 6 && (rssi_val - pre_rssi_val) > -6)
     {
-      printf("\n");
+      tick++;
+    }
+    else
+    {
+      printf("%d X %d \n",pre_rssi_val,tick);
+      tick = 1;
+      pre_rssi_val = rssi_val;
     }
   }
   rssi_val_count = 0;

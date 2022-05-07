@@ -212,7 +212,7 @@ void rtimer_run_next(void);
 ({ \
 bool c; \
 while(!(c = cond) && RTIMER_CLOCK_LT(RTIMER_NOW(), (t0) + (max_time))) { \
-rssi_func; \
+rssi_func(); \
 } \
 c; \
 })

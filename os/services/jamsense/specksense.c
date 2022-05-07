@@ -550,8 +550,8 @@ int specksense_process()
 			rssi_sampler(SAMPLE_AMOUNT,channel_rssi,rssi_stop_time);
 		}
 #else
-		rssi_stop_time = RTIMER_NOW() + 100000;
-		specksense_channel_add(26);
+		rssi_stop_time = RTIMER_NOW() + 1000000;
+		specksense_channel_add(22);
 		int channel_rssi = specksense_channel_peek();
 		if (channel_rssi != 0)
 		{
