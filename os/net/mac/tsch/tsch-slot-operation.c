@@ -136,6 +136,9 @@ struct input_packet input_array[TSCH_MAX_INCOMING_PACKETS];
 static int rssi_val_buf[10000]; 
 static uint16_t rssi_val_count = 0;
 
+/* 1 for success rx slot, 0 for failed */
+static int rx_success = 0;
+
 /* Updates and reads of the next two variables must be atomic (i.e. both together) */
 /* Last time we received Sync-IE (ACK or data packet from a time source) */
 static struct tsch_asn_t last_sync_asn;
@@ -1007,7 +1010,10 @@ PT_THREAD(tsch_rx_slot(struct pt *pt, struct rtimer *t))
               log->rx.seqno = frame.seq;
             );
           }
-
+          if(frame_valid)
+          {
+            rx_success = 1;
+          }
           /* Poll process for processing of pending input and logs */
           process_poll(&tsch_pending_events_process);
         }
@@ -1240,20 +1246,29 @@ tsch_slot_operation_sync(rtimer_clock_t next_slot_start,
 void
 tsch_slot_rssi_sampler()
 {
+#ifdef TSCH_RX_SLOT_RSSI
   if(rssi_val_count<10000)
   {
     NETSTACK_RADIO.get_value(RADIO_PARAM_RSSI,  &rssi_val_buf[rssi_val_count]);
     rssi_val_count++;
   }
+#endif
 }
 /*---------------------------------------------------------------------------*/
 /* process RSSI value in pending process */
 void
 tsch_slot_rssi_pending()
 {
+  if(rssi_val_count > 0)
+{
+  if(rx_success)
+  printf("\n\nsuccess\n");
+  else
+  printf("\n\nfailed\n");
+
   int i,
-   rssi_val, pre_rssi_val = 0, 
-   tick = 1;
+   rssi_val, pre_rssi_val = rssi_val_buf[0], 
+   tick = 0;
   for(i=0; i<rssi_val_count; i++)
   {
     rssi_val = rssi_val_buf[i];
@@ -1269,6 +1284,8 @@ tsch_slot_rssi_pending()
     }
   }
   rssi_val_count = 0;
+  rx_success = 0;
+}
 }
 /*---------------------------------------------------------------------------*/
 /** @} */

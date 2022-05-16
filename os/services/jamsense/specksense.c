@@ -130,11 +130,11 @@ static bool check_jammer_status(int channel)
 	{
 		if(jammer_queue[channel].type == 1)
 		{
-			LOG_INFO("CH%d: PROACTIVE JAMMER SUSPICIOUS\n",specksense_channel_peek());
+			LOG_INFO("CH%d: PROACTIVE JAMMER RECORD EXIST\n",specksense_channel_peek());
 		}
 		else if (jammer_queue[channel].type == 2)
 		{
-			LOG_INFO("CH%d: REACTIVE JAMMER SUSPICIOUS\n",specksense_channel_peek());
+			LOG_INFO("CH%d: REACTIVE JAMMER RECORD EXIST\n",specksense_channel_peek());
 		}
 		specksense_channel_remove();
 		return false;
@@ -155,10 +155,6 @@ void rssi_sampler(int sample_amount, int channel, rtimer_clock_t rssi_stop_time)
 
 	record.rssi_rle[0][1] = 0;
 	record.rssi_rle[0][0] = 0;
-
-	#if !MAC_CONF_WITH_TSCH
-	channel = 26;
-	#endif
 
 	if(channel != pre_measurement_channel)
 		{
