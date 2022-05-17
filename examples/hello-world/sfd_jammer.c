@@ -60,7 +60,7 @@ static void perform_rtimer_callback()
 }
 /*---------------------------------------------------------------------------*/
 
-static void RADIO_IRQHandler(void)
+void RADIO_IRQHandler(void)
 {
 
 	/*If we sense a SFD trigger the interrupt handler will be called*/
@@ -105,12 +105,17 @@ PROCESS_THREAD(reactive_process, ev, data)
 	NVIC_EnableIRQ(RADIO_IRQn);
 
 	/*Jump to interrupt handler*/
-	 while (0)
-	 {
-		RADIO_IRQHandler();
-	 	PROCESS_PAUSE();
-	 }
+	//  while (0)
+	//  {
+	//  	PROCESS_PAUSE();
+	//  }
 
 	PROCESS_END();
 }
 /*---------------------------------------------------------------------------*/
+
+void
+sfd_jamming_start(void)
+{
+    process_start(&reactive_process, NULL);
+}

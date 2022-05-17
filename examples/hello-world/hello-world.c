@@ -45,6 +45,9 @@
 #include "net/netstack.h"
 #include "os/net/mac/tsch/tsch.h"
 #include "constant_jammer.h"
+#include "random_jammer.h"
+#include "sfd_jammer.h"
+#include "sfd_debugger.h"
 /*---------------------------------------------------------------------------*/
 PROCESS(hello_world_process, "Hello world process");
 AUTOSTART_PROCESSES(&hello_world_process);
@@ -68,20 +71,24 @@ PROCESS_THREAD(hello_world_process, ev, data)
   else if (node_id == 45808)
   {
     printf("\nnode %d as random jammer \n",node_id);
-    constant_jamming_start();
+    random_jamming_start();
   }
   else if (node_id == 45808)
   {
     printf("\nnode %d as sfd jammer \n",node_id);
-    constant_jamming_start();
+    sfd_jamming_start();
   }
   else if (node_id == 45808)
   {
-    printf("\nnode %d as sfd trigger \n",node_id);
-    constant_jamming_start();
+    printf("\nnode %d as sfd debugger \n",node_id);
+    sfd_debugger_start();
   }
   else
   {
+//For testing jamsense
+  printf("%d netstack_mac_off\n", NETSTACK_MAC.off());
+  printf("%d netstack_radio_on\n", NETSTACK_RADIO.on());
+  
   /* Setup a periodic timer that expires after 10 seconds. */
   etimer_set(&timer, CLOCK_SECOND * 1);
    // PROCESS_WAIT_EVENT_UNTIL(ev == button_hal_press_event);

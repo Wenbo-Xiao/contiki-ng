@@ -62,3 +62,9 @@ PROCESS_THREAD(sfd_debugger_process, ev, data)
 	}
 	PROCESS_END();
 }
+
+void
+sfd_debugger_start(void)
+{
+    process_start(&sfd_debugger_process, NULL);
+}

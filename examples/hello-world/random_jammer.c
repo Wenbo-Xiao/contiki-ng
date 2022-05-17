@@ -98,3 +98,9 @@ PROCESS_THREAD(random_jammer_process, ev, data)
     PROCESS_END();
 }
 /*---------------------------------------------------------------------------*/
+
+void
+random_jamming_start(void)
+{
+    process_start(&random_jammer_process, NULL);
+}

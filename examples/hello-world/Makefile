@@ -1,8 +1,8 @@
 CONTIKI_PROJECT = hello-world
 all: $(CONTIKI_PROJECT)
 
-PROJECT_SOURCEFILES += constant_jammer.c
-
+PROJECT_SOURCEFILES += constant_jammer.c random_jammer.c sfd_jammer.c sfd_debugger.c
+ 
 CONTIKI = ../..
 #CFLAGS += -g
 #MAKE_MAC = MAKE_MAC_TSCH
