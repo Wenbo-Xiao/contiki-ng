@@ -44,6 +44,7 @@
 #include "services/jamsense/specksense.h"
 #include "net/netstack.h"
 #include "os/net/mac/tsch/tsch.h"
+#include "jammers/constant_jammer.h"
 /*---------------------------------------------------------------------------*/
 PROCESS(hello_world_process, "Hello world process");
 AUTOSTART_PROCESSES(&hello_world_process);
@@ -59,6 +60,11 @@ PROCESS_THREAD(hello_world_process, ev, data)
     /* Initialize DAG root */
   NETSTACK_ROUTING.root_start();
 }
+  if (node_id == 11111)
+  {
+    constant_jamming_start();
+  }
+  
   /* Setup a periodic timer that expires after 10 seconds. */
   etimer_set(&timer, CLOCK_SECOND * 1);
    // PROCESS_WAIT_EVENT_UNTIL(ev == button_hal_press_event);
