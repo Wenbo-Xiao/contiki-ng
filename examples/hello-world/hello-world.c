@@ -51,20 +51,37 @@ AUTOSTART_PROCESSES(&hello_world_process);
 /*---------------------------------------------------------------------------*/
 PROCESS_THREAD(hello_world_process, ev, data)
 {
-  //static rtimer_clock_t start;
+  static rtimer_clock_t start;
   static struct etimer timer;
- // static int  loop=0;
+  static int  loop=0;
   PROCESS_BEGIN();
   if (node_id == 35176 )
- {
-    /* Initialize DAG root */
-  NETSTACK_ROUTING.root_start();
-}
-  if (node_id == 11111)
   {
+    /* Initialize DAG root */
+    NETSTACK_ROUTING.root_start();
+  }
+  else if (node_id == 45808)
+  {
+    printf("\nnode %d as constant jammer \n",node_id);
     constant_jamming_start();
   }
-  
+  else if (node_id == 45808)
+  {
+    printf("\nnode %d as random jammer \n",node_id);
+    constant_jamming_start();
+  }
+  else if (node_id == 45808)
+  {
+    printf("\nnode %d as sfd jammer \n",node_id);
+    constant_jamming_start();
+  }
+  else if (node_id == 45808)
+  {
+    printf("\nnode %d as sfd trigger \n",node_id);
+    constant_jamming_start();
+  }
+  else
+  {
   /* Setup a periodic timer that expires after 10 seconds. */
   etimer_set(&timer, CLOCK_SECOND * 1);
    // PROCESS_WAIT_EVENT_UNTIL(ev == button_hal_press_event);
@@ -79,29 +96,31 @@ PROCESS_THREAD(hello_world_process, ev, data)
 // specksense_channel_peek();
 // specksense_channel_remove();
 // specksense_channel_peek();
- /*printf("\nnode id %d \n",node_id);
-while(1) {
+// printf("\nnode id %d \n",node_id);
+while(0) {
     PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
     etimer_reset(&timer);
-    */
+    
     /* Wait for the periodic timer to expire and then restart the timer. */
-    /*
+    
     start = RTIMER_NOW();
     specksense_process();
     printf("rssi_sampler time %lu \n",RTIMER_NOW() - start);
     start = RTIMER_NOW();
     specksense_process();
-    printf("classification time time %lu \n",RTIMER_NOW() - start);
+    printf("classification time %lu \n",RTIMER_NOW() - start);
     loop++;
     printf("loop : %d \n",loop);
     if(loop >= 1000) break;
-  }*/
+    printf("\nnode id %d \n",node_id);
+  }
 	/*while (1)
 	{
 		PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
 		etimer_reset(&timer);
 		printf("\nnode id %d \n",node_id);
 	}*/
+  }
   PROCESS_END();
 }
 /*---------------------------------------------------------------------------*/

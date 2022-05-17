@@ -12,7 +12,8 @@
         "array": "c",
         "tuple": "c",
         "type_traits": "c",
-        "utility": "c"
+        "utility": "c",
+        "netstack.h": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

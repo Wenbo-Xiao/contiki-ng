@@ -55,7 +55,6 @@ PROCESS_THREAD(constant_jammer_process, ev, data)
     printf("%d netstack_mac_off\n", NETSTACK_MAC.off());
     printf("%d netstack_radio_on\n", NETSTACK_RADIO.on());
     while (true){
-
         if (!is_init){
             dtm_init();
             NRF_RADIO->TXPOWER = 0x08UL;
