@@ -44,7 +44,7 @@
 #include "services/jamsense/specksense.h"
 #include "net/netstack.h"
 #include "os/net/mac/tsch/tsch.h"
-#include "jammers/constant_jammer.h"
+#include "constant_jammer.h"
 /*---------------------------------------------------------------------------*/
 PROCESS(hello_world_process, "Hello world process");
 AUTOSTART_PROCESSES(&hello_world_process);
