@@ -54,79 +54,82 @@ AUTOSTART_PROCESSES(&hello_world_process);
 /*---------------------------------------------------------------------------*/
 PROCESS_THREAD(hello_world_process, ev, data)
 {
-  static rtimer_clock_t start;
-  static struct etimer timer;
-  static int  loop=0;
+  // static rtimer_clock_t start;
+  // static struct etimer timer;
+  // static int  loop=0;
   PROCESS_BEGIN();
-  if (node_id == 35176 )
+  if (node_id == 62635)
   {
     /* Initialize DAG root */
     NETSTACK_ROUTING.root_start();
   }
-  else if (node_id == 45808)
+  else if (node_id == 00000)
   {
     printf("\nnode %d as constant jammer \n",node_id);
     constant_jamming_start();
   }
-  else if (node_id == 45808)
+  else if (node_id == 00000)
   {
     printf("\nnode %d as random jammer \n",node_id);
     random_jamming_start();
   }
-  else if (node_id == 45808)
+  else if (node_id == 52853 || node_id == 48020 || node_id == 51502 || node_id == 25868)
   {
     printf("\nnode %d as sfd jammer \n",node_id);
     sfd_jamming_start();
   }
-  else if (node_id == 45808)
+  else if (node_id == 24315 || node_id == 46505 || node_id == 35176 || node_id == 11549)
   {
     printf("\nnode %d as sfd debugger \n",node_id);
     sfd_debugger_start();
   }
   else
   {
-//For testing jamsense
-  printf("%d netstack_mac_off\n", NETSTACK_MAC.off());
-  printf("%d netstack_radio_on\n", NETSTACK_RADIO.on());
+// //For testing jamsense
+
   
-  /* Setup a periodic timer that expires after 10 seconds. */
-  etimer_set(&timer, CLOCK_SECOND * 1);
-   // PROCESS_WAIT_EVENT_UNTIL(ev == button_hal_press_event);
+//   /* Setup a periodic timer that expires after 10 seconds. */
+//   etimer_set(&timer, CLOCK_SECOND * 1);
+//    // PROCESS_WAIT_EVENT_UNTIL(ev == button_hal_press_event);
     
-// 	init_power_levels();
-// 	specksense_channel_peek();
-//  	specksense_channel_add(11);
-// specksense_channel_peek();
-// specksense_channel_add(12);
-// specksense_channel_peek();
-// specksense_channel_remove();
-// specksense_channel_peek();
-// specksense_channel_remove();
-// specksense_channel_peek();
-// printf("\nnode id %d \n",node_id);
-while(0) {
-    PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
-    etimer_reset(&timer);
+// // 	init_power_levels();
+// // 	specksense_channel_peek();
+// //  	specksense_channel_add(11);
+// // specksense_channel_peek();
+// // specksense_channel_add(12);
+// // specksense_channel_peek();
+// // specksense_channel_remove();
+// // specksense_channel_peek();
+// // specksense_channel_remove();
+// // specksense_channel_peek();
+// // printf("\nnode id %d \n",node_id);
+
+//   printf("%d netstack_mac_off\n", NETSTACK_MAC.off());
+//   printf("%d netstack_radio_on\n", NETSTACK_RADIO.on());
+
+// while(0) {
+//     PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
+//     etimer_reset(&timer);
     
-    /* Wait for the periodic timer to expire and then restart the timer. */
+//     /* Wait for the periodic timer to expire and then restart the timer. */
     
-    start = RTIMER_NOW();
-    specksense_process();
-    printf("rssi_sampler time %lu \n",RTIMER_NOW() - start);
-    start = RTIMER_NOW();
-    specksense_process();
-    printf("classification time %lu \n",RTIMER_NOW() - start);
-    loop++;
-    printf("loop : %d \n",loop);
-    if(loop >= 1000) break;
-    printf("\nnode id %d \n",node_id);
-  }
-	/*while (1)
-	{
-		PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
-		etimer_reset(&timer);
-		printf("\nnode id %d \n",node_id);
-	}*/
+//     start = RTIMER_NOW();
+//     specksense_process();
+//     printf("rssi_sampler time %lu \n",RTIMER_NOW() - start);
+//     start = RTIMER_NOW();
+//     specksense_process();
+//     printf("classification time %lu \n",RTIMER_NOW() - start);
+//     loop++;
+//     printf("loop : %d \n",loop);
+//     if(loop >= 1000) break;
+//     printf("\nnode id %d \n",node_id);
+//   }
+// 	/*while (1)
+// 	{
+// 		PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
+// 		etimer_reset(&timer);
+// 		printf("\nnode id %d \n",node_id);
+// 	}*/
   }
   PROCESS_END();
 }

@@ -987,12 +987,15 @@ PROCESS_THREAD(tsch_pending_events_process, ev, data)
     TSCH_CALLBACK_SELECT_CHANNELS();
 #endif
 #if BUILD_WITH_JAMSENSE
-    RSSI_time = rssi_stop_time - RTIMER_NOW();
-    //LOG_INFO("specksense run time %lu \n",RSSI_time);
-    if(RSSI_time > 5000)
+    if(!tsch_is_coordinator)
     {
-      specksense_process();
-    }  
+       RSSI_time = rssi_stop_time - RTIMER_NOW();
+      //LOG_INFO("specksense run time %lu \n",RSSI_time);
+      if(RSSI_time > 5000)
+      {
+        specksense_process();
+      }  
+    }
 #endif 
   }
   PROCESS_END();

@@ -5,8 +5,8 @@ PROJECT_SOURCEFILES += constant_jammer.c random_jammer.c sfd_jammer.c sfd_debugg
  
 CONTIKI = ../..
 #CFLAGS += -g
-#MAKE_MAC = MAKE_MAC_TSCH
-MAKE_MAC = MAKE_MAC_NULLMAC
+MAKE_MAC = MAKE_MAC_TSCH
+#MAKE_MAC = MAKE_MAC_NULLMAC
 
 include $(CONTIKI)/Makefile.dir-variables
 MODULES += $(CONTIKI_NG_SERVICES_DIR)/shell
