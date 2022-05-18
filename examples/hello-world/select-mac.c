@@ -6,13 +6,14 @@
 #include "net/mac/mac.h"
 #include "net/mac/nullmac/nullmac.h"
 #include "net/mac/tsch/tsch.h"
-
+#include "sys/node-id.h"
 
 static const struct mac_driver *current_mac_driver;
 /*---------------------------------------------------------------------------*/
 static void
 mac_init(void)
 {
+  node_id_init();
   /* Select if TSCH or nullmac should be used */
 #ifndef SELECT_MAC_FUNCTION
   bool use_nullmac = false;
