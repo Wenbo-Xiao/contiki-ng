@@ -14,7 +14,8 @@
         "type_traits": "c",
         "utility": "c",
         "netstack.h": "c",
-        "random_jammer.h": "c"
+        "random_jammer.h": "c",
+        "stdint.h": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }
