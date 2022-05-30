@@ -744,12 +744,6 @@ PT_THREAD(tsch_tx_slot(struct pt *pt, struct rtimer *t))
       tsch_stats_tx_packet(current_neighbor, mac_tx_status, tsch_current_channel);
     }
 
-#if BUILD_WITH_JAMSENSE
-    if (current_packet->transmissions > 1)
-    {
-      specksense_channel_add(tsch_current_channel);
-    }
-#endif
 
     /* Log every tx attempt */
     TSCH_LOG_ADD(tsch_log_tx,
@@ -767,6 +761,14 @@ PT_THREAD(tsch_tx_slot(struct pt *pt, struct rtimer *t))
         linkaddr_copy(&log->tx.dest, queuebuf_addr(current_packet->qb, PACKETBUF_ADDR_RECEIVER));
         log->tx.seqno = queuebuf_attr(current_packet->qb, PACKETBUF_ATTR_MAC_SEQNO);
     );
+
+#if BUILD_WITH_JAMSENSE
+    //0 indicates success. 2 indicates no-ack.
+    if (mac_tx_status != 0)
+    {
+      specksense_channel_add(tsch_current_channel);
+    }
+#endif
 
     /* Poll process for later processing of packet sent events and logs */
     process_poll(&tsch_pending_events_process);

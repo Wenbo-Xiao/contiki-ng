@@ -165,7 +165,7 @@ void rssi_sampler(int sample_amount, int channel, rtimer_clock_t rssi_stop_time)
 	pre_measurement_channel = channel;
 
 	//int times = 0;
-#if MAC_CONF_WITH_TSCH
+#if TSCH_WITH_JAMSENSE == 1
 	//if(!tsch_get_lock())
 	{
 		
@@ -251,7 +251,7 @@ void rssi_sampler(int sample_amount, int channel, rtimer_clock_t rssi_stop_time)
 		}
 
 	}
-#if MAC_CONF_WITH_TSCH
+#if TSCH_WITH_JAMSENSE == 1
 	NETSTACK_RADIO.set_value(RADIO_PARAM_CHANNEL, tsch_current_channel);
 	//tsch_release_lock();
 	}
@@ -539,7 +539,7 @@ int specksense_process()
 	}
 	else
 	{
-#if MAC_CONF_WITH_TSCH
+#if TSCH_WITH_JAMSENSE == 1
 		int channel_rssi = specksense_channel_peek();
 		if (channel_rssi != 0 && check_jammer_status(channel_rssi))
 		{
@@ -547,7 +547,7 @@ int specksense_process()
 		}
 #else
 		rssi_stop_time = RTIMER_NOW() + 1000000;
-		specksense_channel_add(22);
+		specksense_channel_add(26);
 		int channel_rssi = specksense_channel_peek();
 		if (channel_rssi != 0)
 		{

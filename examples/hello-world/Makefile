@@ -1,9 +1,12 @@
 CONTIKI_PROJECT = hello-world
 all: $(CONTIKI_PROJECT)
 
-PROJECT_SOURCEFILES += constant_jammer.c random_jammer.c sfd_jammer.c sfd_debugger.c 
+PROJECT_SOURCEFILES += constant_jammer.c random_jammer.c 
+# sfd_jammer.c sfd_debugger.c 
 PROJECT_SOURCEFILES += select-mac.c jammer_node.c
  
+CFLAGS+=-DTSCH_WITH_JAMSENSE=1 #0 for test jamsense only, 1 for jamsense with tsch 
+
 CONTIKI = ../..
 #CFLAGS += -g
 MAKE_MAC = MAKE_MAC_TSCH

@@ -993,6 +993,7 @@ PROCESS_THREAD(nrf52840_ieee_rf_process, ev, data)
 }
 /*---------------------------------------------------------------------------*/
 __attribute__((weak)) void
+// void
 RADIO_IRQHandler(void)
 {
   if(!rf_config.poll_mode) {
