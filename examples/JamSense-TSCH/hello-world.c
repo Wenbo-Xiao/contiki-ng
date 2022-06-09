@@ -56,9 +56,9 @@ AUTOSTART_PROCESSES(&hello_world_process);
 /*---------------------------------------------------------------------------*/
 PROCESS_THREAD(hello_world_process, ev, data)
 {
-  //static rtimer_clock_t start;
-  //static int  loop=0;
-  static struct etimer timer;
+  // static rtimer_clock_t start;
+  // static int  loop=0;
+  // static struct etimer timer;
   PROCESS_BEGIN();
   // PROCESS_WAIT_EVENT_UNTIL(ev == button_hal_press_event);
     
@@ -94,10 +94,10 @@ PROCESS_THREAD(hello_world_process, ev, data)
 
   
   /* Setup a periodic timer that expires after 10 seconds. */
-  etimer_set(&timer, CLOCK_SECOND * 1);
+  /*etimer_set(&timer, CLOCK_SECOND * 1);
 
 
-  /*while(1) 
+  while(1) 
     {
       PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
       etimer_reset(&timer);
@@ -113,8 +113,8 @@ PROCESS_THREAD(hello_world_process, ev, data)
       loop++;
       printf("loop : %d \n",loop);
       if(loop >= 1000) break;
-    }*/
-  
+    }
+  */
   }
   PROCESS_END();
 }
