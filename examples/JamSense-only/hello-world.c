@@ -49,7 +49,7 @@
 #include "random_jammer.h"
 #include "sfd_jammer.h"
 //#include "sfd_debugger.h"
-//#include "jammer_node.h"
+#include "jammer_node.h"
 /*---------------------------------------------------------------------------*/
 PROCESS(hello_world_process, "Hello world process");
 AUTOSTART_PROCESSES(&hello_world_process);
@@ -112,7 +112,7 @@ PROCESS_THREAD(hello_world_process, ev, data)
       printf("classification time %lu \n",RTIMER_NOW() - start);
       loop++;
       printf("loop : %d \n",loop);
-      if(loop >= 1000) break;
+      if(loop >= 5000) break;
     }
   
   }

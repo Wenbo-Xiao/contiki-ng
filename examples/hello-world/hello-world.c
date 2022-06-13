@@ -38,84 +38,30 @@
  */
 
 #include "contiki.h"
-#include "sys/node-id.h"
-#include "dev/watchdog.h"
 #include "dev/button-hal.h"
 #include <stdio.h> /* For printf() */
-#include "services/jamsense/specksense.h"
 #include "net/netstack.h"
-#include "os/net/mac/tsch/tsch.h"
-#include "constant_jammer.h"
-#include "random_jammer.h"
-#include "sfd_jammer.h"
-//#include "sfd_debugger.h"
-//#include "jammer_node.h"
+#include "sys/node-id.h"
 /*---------------------------------------------------------------------------*/
 PROCESS(hello_world_process, "Hello world process");
 AUTOSTART_PROCESSES(&hello_world_process);
 /*---------------------------------------------------------------------------*/
 PROCESS_THREAD(hello_world_process, ev, data)
 {
-  // static rtimer_clock_t start;
-  // static int  loop=0;
-  // static struct etimer timer;
+  static struct etimer timer;
   PROCESS_BEGIN();
-  // PROCESS_WAIT_EVENT_UNTIL(ev == button_hal_press_event);
-    
-  // printf("\nnode id %d \n",node_id);
-  
-  if (node_id == 11896 || node_id == 13282)
-  {
-    NETSTACK_ROUTING.root_start();
-  }
-  else if (node_id == 00000)
-  {
-    printf("\nnode %d as constant jammer \n",node_id);
-    constant_jamming_start();
-  }
-  else if (node_id == 00000)
-  {
-    printf("\nnode %d as random jammer \n",node_id);
-    random_jamming_start();
-  }
-  // else if (node_id == 00000)
-  // {
-  //   printf("\nnode %d as sfd jammer \n",node_id);
-  //   sfd_jamming_start();
-  // }
-  // else if (node_id == 00000)
-  // {
-  //   printf("\nnode %d as sfd debugger \n",node_id);
-  //   sfd_debugger_start();
-  // }
-  else
-  {
-//For testing jamsense
-
-  
   /* Setup a periodic timer that expires after 10 seconds. */
-  /*etimer_set(&timer, CLOCK_SECOND * 1);
+  etimer_set(&timer, CLOCK_SECOND * 2);
+  while(1) {
+    PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
+    etimer_reset(&timer);
+    
+    /* Wait for the periodic timer to expire and then restart the timer. */
 
-
-  while(1) 
-    {
-      PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
-      etimer_reset(&timer);
-      
-      watchdog_periodic();
-
-      start = RTIMER_NOW();
-      specksense_process();
-      printf("rssi_sampler time %lu \n",RTIMER_NOW() - start);
-      start = RTIMER_NOW();
-      specksense_process();
-      printf("classification time %lu \n",RTIMER_NOW() - start);
-      loop++;
-      printf("loop : %d \n",loop);
-      if(loop >= 1000) break;
-    }
-  */
+    printf("\nnode id %d \n",node_id);
+    
   }
+
   PROCESS_END();
 }
 /*---------------------------------------------------------------------------*/

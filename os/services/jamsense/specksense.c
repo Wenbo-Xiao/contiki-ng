@@ -143,18 +143,14 @@ static bool check_jammer_status(int channel)
 /*---------------------------------------------------------------------------*/
 void rssi_sampler(int sample_amount, int channel, rtimer_clock_t rssi_stop_time)
 {
-	/*sample_amount is the amount that is going to do, sample_cnt is the amount that already done*/
+	/*sample_amount is the amount that is going to do, sample_cnt is the amount that already done, rle_ptr is sample amount for current loop*/
 	if(sample_amount + sample_cnt > RUN_LENGTH)
 	{
 		sample_amount = RUN_LENGTH - sample_cnt;
 	}
 	//LOG_INFO("START RSSI, Sample amount: %d  \n",sample_amount);
 	// sample_st = RTIMER_NOW();
-	rle_ptr = -1;
-	
-
-	record.rssi_rle[0][1] = 0;
-	record.rssi_rle[0][0] = 0;
+	rle_ptr = 0;
 
 	if(channel != pre_measurement_channel)
 		{
@@ -188,6 +184,7 @@ void rssi_sampler(int sample_amount, int channel, rtimer_clock_t rssi_stop_time)
 			/* quit rssi if doesnt have enough time */
 			if((RTIMER_NOW() + 200) > rssi_stop_time)
 			{
+				sample_cnt = rle_ptr > 0 ? rle_ptr : 0;
 				break;
 			}
 
@@ -259,7 +256,7 @@ void rssi_sampler(int sample_amount, int channel, rtimer_clock_t rssi_stop_time)
 
 	//LOG_INFO("This is how many times the loop looped: %d \n", times);
 	watchdog_start();
-	sample_cnt = rle_ptr;
+	sample_cnt = rle_ptr > 0 ? rle_ptr : 0;
 	LOG_INFO("RSSI sample %d\n", sample_cnt);
 }
 /*---------------------------------------------------------------------------*/
@@ -501,17 +498,18 @@ PROCESS_THREAD(classification, ev, data)
 				specksense_channel_remove();
 			}
 		}
-		sample_cnt = 0;
-		n_clusters = -1;
-        classification_status = 0;
 
-		//if havent found jammer within 10 specksense loop, remove channel
-		if(specksense_loop > 9)
+		//if havent found jammer within 2 specksense loop, remove channel
+		if(specksense_loop >= 2)
 		{
 			specksense_loop = 0;
 			specksense_channel_remove();
 		}
-		
+
+		sample_cnt = 0;
+		n_clusters = -1;
+        classification_status = 0;
+
 	PROCESS_END();
 }
 

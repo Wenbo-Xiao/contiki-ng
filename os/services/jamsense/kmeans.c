@@ -348,6 +348,7 @@ int check_similarity(int profiling)
         }
         PCJ_cnt = 0;
         RSJ_cnt = 0;
+        num_jamming_cluster = 0;
 #else
         calc_consistency();
 #endif
@@ -624,17 +625,18 @@ int kmeans(struct record *record, int rle_ptr)
                 clusters[num_jamming_cluster].vector_duration = prev_K_final[i][0];
                 clusters[num_jamming_cluster].plevel = prev_K_final[i][1];
                 num_jamming_cluster++;
-            }
 
-            //for dubugging print
-            if (1)
-            {
-                if (prev_K_final[i][1] >= 13)
+                //for dubugging print
+                if (1)
                 {
                     printf("cluster %d : vector_duration: %d plevel: %d \n", i, prev_K_final[i][0], prev_K_final[i][1]);
                 }
             }
         }
+    }
+    else
+    {
+        num_jamming_cluster = 0;
     }
 
     //end = RTIMER_NOW();
