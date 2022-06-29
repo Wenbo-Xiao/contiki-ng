@@ -257,7 +257,7 @@ void rssi_sampler(int sample_amount, int channel, rtimer_clock_t rssi_stop_time)
 	//LOG_INFO("This is how many times the loop looped: %d \n", times);
 	watchdog_start();
 	sample_cnt = rle_ptr > 0 ? rle_ptr : 0;
-	LOG_INFO("RSSI sample %d\n", sample_cnt);
+	LOG_INFO("CH%d: RSSI sample %d\n", channel, sample_cnt);
 }
 /*---------------------------------------------------------------------------*/
 

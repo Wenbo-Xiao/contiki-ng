@@ -626,11 +626,13 @@ int kmeans(struct record *record, int rle_ptr)
                 clusters[num_jamming_cluster].plevel = prev_K_final[i][1];
                 num_jamming_cluster++;
 
-                //for dubugging print
-                if (1)
-                {
-                    printf("cluster %d : vector_duration: %d plevel: %d \n", i, prev_K_final[i][0], prev_K_final[i][1]);
-                }
+                
+
+            }
+            //for dubugging print
+            if (1)
+            {
+                printf("cluster %d : vector_duration: %d plevel: %d \n", i, prev_K_final[i][0], prev_K_final[i][1]);
             }
         }
     }

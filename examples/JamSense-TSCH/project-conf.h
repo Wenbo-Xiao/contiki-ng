@@ -13,3 +13,13 @@
 extern bool jammer_node(void);
 #define SELECT_MAC_FUNCTION jammer_node
 //#define TSCH_CONF_DEFAULT_HOPPING_SEQUENCE	   TSCH_HOPPING_SEQUENCE_16_16
+
+/* Enable printing of packet counters */
+#define LINK_STATS_CONF_PACKET_COUNTERS          1
+
+/* Application settings */
+#define APP_SEND_INTERVAL_SEC 20
+#define APP_WARM_UP_PERIOD_SEC 120
+
+#define SICSLOWPAN_CONF_FRAG 0 /* No fragmentation */
+#define UIP_CONF_BUFFER_SIZE 200

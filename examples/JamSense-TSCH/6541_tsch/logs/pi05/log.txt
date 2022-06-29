@@ -1,0 +1,358 @@
+1655463950834334 [INFO: TSCH      ] scanning on channel 15
+1655463951813809 [INFO: TSCH      ] scanning on channel 15
+1655463952022324 [INFO: TSCH      ] scan: received packet (35 bytes) on channel 15
+1655463952039583 [INFO: TSCH      ] parse_eb: no schedule, setting up minimal schedule
+1655463952056503 [INFO: TSCH Sched] add_slotframe 0 7
+1655463952073725 [INFO: TSCH Sched] add_link sf=0 opt=Tx|Rx|Sh type=ADV ts=0 ch=0 addr=ffff.ffff.ffff.ffff
+1655463952090436 [INFO: TSCH Queue] update time source: (NULL LL addr) -> f4ce.36f4.416a.ea31
+1655463952107438 [INFO: TSCH      ] association done (1), sec 0, PAN ID abcd, asn-0.150, jp 1, timeslot id 0, hopping id 0, slotframe len 0 with 0 links, from f4ce.36f4.416a.ea31
+1655463953830953 [INFO: TSCH      ] received from f4ce.36f4.416a.ea31 with seqno 65535
+1655463953848264 [WARN: RPL       ] just joined, no parent yet, setting timer for leaving
+1655463956442805 [INFO: TSCH      ] send packet to f4ce.36f4.416a.ea31 with seqno 1, queue 1/8 1/8, len 21 100
+1655463956492282 [INFO: TSCH      ] packet sent to f4ce.36f4.416a.ea31, seqno 1, status 0, tx 1
+1655463958239735 [INFO: TSCH      ] send packet to f4ce.36f4.416a.ea31 with seqno 2, queue 1/8 1/8, len 21 100
+1655463958312615 [INFO: TSCH      ] packet sent to f4ce.36f4.416a.ea31, seqno 2, status 0, tx 1
+1655463961980608 [INFO: TSCH      ] send packet to f4ce.36f4.416a.ea31 with seqno 3, queue 1/8 1/8, len 21 100
+1655463962092741 [INFO: TSCH      ] packet sent to f4ce.36f4.416a.ea31, seqno 3, status 0, tx 1
+1655463962465572 [INFO: TSCH      ] send packet to f4ce.36f4.416a.ea31 with seqno 4, queue 1/8 1/8, len 21 100
+1655463962514144 [INFO: TSCH      ] packet sent to f4ce.36f4.416a.ea31, seqno 4, status 0, tx 1
+1655463962530918 [WARN: RPL       ] found parent: fe80::f6ce:36f4:416a:ea31, staying in DAG
+1655463965425299 [INFO: TSCH      ] send packet to f4ce.36f4.416a.ea31 with seqno 5, queue 1/8 1/8, len 21 83
+1655463965452172 [INFO: TSCH      ] packet sent to f4ce.36f4.416a.ea31, seqno 5, status 0, tx 1
+1655463965590133 [INFO: TSCH      ] received from f4ce.36f4.416a.ea31 with seqno 200
+1655463968667412 [INFO: TSCH      ] received from f4ce.36c7.728d.0d1b with seqno 65535
+1655463969442176 [INFO: TSCH      ] send packet to ffff.ffff.ffff.ffff with seqno 5, queue 1/8 1/8, len 14 94
+1655463969510694 [INFO: TSCH      ] packet sent to 0000.0000.0000.0000, seqno 203, status 0, tx 1
+1655463970069808 [INFO: TSCH      ] received from f4ce.36d5.eac9.a6a2 with seqno 65535
+1655463970704775 [INFO: TSCH      ] TSCH: enqueue EB packet 35 16
+1655463970767764 [INFO: TSCH      ] packet sent to 0000.0000.0000.0000, seqno 204, status 0, tx 1
+1655463971892377 [INFO: TSCH      ] received from f4ce.36e8.500e.c592 with seqno 151
+1655463972312443 [INFO: TSCH      ] received from f4ce.36c7.728d.0d1b with seqno 249
+1655463972591999 [INFO: TSCH      ] received from f4ce.36e8.500e.c592 with seqno 152
+1655463974692609 [INFO: TSCH      ] received from f4ce.36e8.500e.c592 with seqno 153
+1655463975003730 [INFO: TSCH      ] send packet to ffff.ffff.ffff.ffff with seqno 5, queue 1/8 1/8, len 14 94
+1655463975111267 [INFO: TSCH      ] packet sent to 0000.0000.0000.0000, seqno 205, status 0, tx 1
+1655463975391488 [INFO: TSCH      ] received from f4ce.36e8.500e.c592 with seqno 154
+1655463975950357 [INFO: TSCH      ] received from f4ce.36d5.eac9.a6a2 with seqno 65535
+1655463977836648 [INFO: TSCH      ] TSCH: enqueue EB packet 35 16
+1655463977908732 [INFO: TSCH      ] packet sent to 0000.0000.0000.0000, seqno 206, status 0, tx 1
+1655463980855889 [INFO: TSCH      ] received from f4ce.36e8.500e.c592 with seqno 155
+1655463981548656 [INFO: TSCH      ] send packet to f4ce.36f4.416a.ea31 with seqno 6, queue 1/8 1/8, len 21 92
+1655463981565360 [INFO: TSCH JamSense] channel changed to 25, reset specksense!
+1655463981582380 [INFO: TSCH JamSense] CH25 :RSSI sample 7
+1655463981599035 [INFO: TSCH      ] packet sent to f4ce.36f4.416a.ea31, seqno 6, status 0, tx 2
+1655463981615987 [INFO: TSCH JamSense] CH25 :RSSI sample 18
+1655463981633364 [INFO: TSCH      ] received from f4ce.36f4.416a.ea31 with seqno 202
+1655463981650280 [INFO: TSCH      ] send packet to f4ce.36e8.500e.c592 with seqno 7, queue 1/8 1/8, len 21 58
+1655463981668703 [INFO: TSCH JamSense] CH25 :RSSI sample 23
+1655463981685865 [INFO: TSCH      ] packet sent to f4ce.36e8.500e.c592, seqno 7, status 0, tx 1
+1655463981702782 [INFO: TSCH JamSense] CH25 :RSSI sample 23
+1655463982379659 [INFO: TSCH JamSense] CH25 :RSSI sample 26
+1655463982519916 [INFO: TSCH JamSense] CH25 :RSSI sample 35
+1655463982659981 [INFO: TSCH JamSense] CH25 :RSSI sample 45
+1655463982800054 [INFO: TSCH JamSense] CH25 :RSSI sample 73
+1655463983220043 [INFO: TSCH JamSense] CH25 :RSSI sample 79
+1655463984406221 [INFO: TSCH      ] TSCH: enqueue EB packet 35 16
+1655463984489539 [INFO: TSCH      ] packet sent to 0000.0000.0000.0000, seqno 207, status 0, tx 1
+1655463984623067 [INFO: TSCH JamSense] CH25 :RSSI sample 79
+1655463984639942 [INFO: TSCH      ] received from f4ce.36c5.ea11.0b9b with seqno 65535
+1655463984763275 [INFO: TSCH JamSense] CH25 :RSSI sample 83
+1655463984780727 [INFO: TSCH      ] received from f4ce.36e8.500e.c592 with seqno 65535
+1655463984899335 [INFO: TSCH JamSense] CH25 :RSSI sample 88
+1655463985039574 [INFO: TSCH JamSense] CH25 :RSSI sample 101
+1655463986729986 [INFO: TSCH      ] received from f4ce.36c7.728d.0d1b with seqno 65535
+1655463986860068 [INFO: TSCH JamSense] CH25 :RSSI sample 101
+1655463987000097 [INFO: TSCH JamSense] CH25 :RSSI sample 142
+1655463987280138 [INFO: TSCH JamSense] CH25 :RSSI sample 188
+1655463987569856 [INFO: TSCH      ] received from f4ce.36f4.416a.ea31 with seqno 65535
+1655463987704657 [INFO: TSCH JamSense] CH25 :RSSI sample 189
+1655463987721552 [INFO: TSCH      ] send packet to ffff.ffff.ffff.ffff with seqno 7, queue 1/8 1/8, len 14 94
+1655463987843172 [INFO: TSCH JamSense] CH25 :RSSI sample 207
+1655463987860194 [INFO: TSCH      ] packet sent to 0000.0000.0000.0000, seqno 208, status 0, tx 1
+1655463987980372 [INFO: TSCH JamSense] CH25 :RSSI sample 216
+1655463988551734 [INFO: TSCH      ] received from f4ce.36d5.eac9.a6a2 with seqno 65535
+1655463988584266 [INFO: TSCH JamSense] CH25 :RSSI sample 250
+1655463991348276 [INFO: TSCH JamSense] kmeans 0 clusters!
+1655463991619680 [INFO: TSCH JamSense] CH25 :RSSI sample 5
+1655463991759764 [INFO: TSCH JamSense] CH25 :RSSI sample 20
+1655463992610036 [INFO: TSCH      ] received from f4ce.36e8.500e.c592 with seqno 65535
+1655463992741022 [INFO: TSCH JamSense] CH25 :RSSI sample 89
+1655463993020008 [INFO: TSCH JamSense] CH25 :RSSI sample 148
+1655463993170000 [INFO: TSCH      ] received from f4ce.36f4.416a.ea31 with seqno 65535
+1655463993300194 [INFO: TSCH JamSense] CH25 :RSSI sample 170
+1655463993450525 [INFO: TSCH      ] received from f4ce.36c7.728d.0d1b with seqno 65535
+1655463993554491 [INFO: TSCH JamSense] CH25 :RSSI sample 250
+1655463994290480 [INFO: TSCH JamSense] kmeans 0 clusters!
+1655463994436489 [INFO: TSCH      ] received from f4ce.36e8.500e.c592 with seqno 156
+1655463994453621 [INFO: TSCH      ] send packet to f4ce.36f4.416a.ea31 with seqno 8, queue 1/8 1/8, len 21 92
+1655463994571959 [INFO: TSCH      ] packet sent to f4ce.36f4.416a.ea31, seqno 8, status 0, tx 1
+1655463994714379 [INFO: TSCH      ] received from f4ce.36f4.416a.ea31 with seqno 204
+1655463994730872 [INFO: TSCH      ] send packet to f4ce.36e8.500e.c592 with seqno 9, queue 1/8 1/8, len 21 66
+1655463994851537 [INFO: TSCH      ] packet sent to f4ce.36e8.500e.c592, seqno 9, status 0, tx 1
+1655463994933088 [INFO: TSCH      ] send packet to ffff.ffff.ffff.ffff with seqno 9, queue 1/8 1/8, len 14 94
+1655463994990351 [INFO: TSCH      ] packet sent to 0000.0000.0000.0000, seqno 209, status 0, tx 1
+1655463997229801 [INFO: TSCH      ] received from f4ce.36c5.ea11.0b9b with seqno 65535
+1655463998796179 [INFO: TSCH      ] TSCH: enqueue EB packet 35 16
+1655463998908631 [INFO: TSCH      ] packet sent to 0000.0000.0000.0000, seqno 210, status 0, tx 1
+1655464006329957 [INFO: TSCH      ] received from f4ce.36c5.ea11.0b9b with seqno 65535
+1655464008289152 [INFO: TSCH      ] received from f4ce.36c7.728d.0d1b with seqno 65535
+1655464009269465 [INFO: TSCH      ] received from f4ce.36e8.500e.c592 with seqno 65535
+1655464009574949 [INFO: TSCH      ] send packet to f4ce.36f4.416a.ea31 with seqno 10, queue 1/8 1/8, len 21 21
+1655464009591580 [INFO: TSCH      ] sending KA to f4ce.36f4.416a.ea31
+1655464009692932 [INFO: TSCH      ] packet sent to f4ce.36f4.416a.ea31, seqno 10, status 0, tx 1
+1655464009709943 [INFO: TSCH      ] KA sent to f4ce.36f4.416a.ea31, st 0-1
+1655464009829397 [INFO: TSCH      ] received from f4ce.36d5.eac9.a6a2 with seqno 65535
+1655464010250590 [INFO: TSCH      ] received from f4ce.36e8.500e.c592 with seqno 158
+1655464010267398 [WARN: 6LoWPAN   ] input: empty packet
+1655464010391676 [INFO: TSCH      ] received from f4ce.36f4.416a.ea31 with seqno 65535
+1655464012238082 [INFO: TSCH      ] send packet to ffff.ffff.ffff.ffff with seqno 10, queue 1/8 1/8, len 14 94
+1655464012349692 [INFO: TSCH      ] packet sent to 0000.0000.0000.0000, seqno 211, status 0, tx 1
+1655464013879478 [INFO: TSCH      ] TSCH: enqueue EB packet 35 16
+1655464013896518 [INFO: TSCH      ] packet sent to 0000.0000.0000.0000, seqno 212, status 0, tx 1
+1655464016549618 [INFO: TSCH      ] received from f4ce.36c5.ea11.0b9b with seqno 65535
+1655464023488996 [INFO: TSCH      ] send packet to f4ce.36f4.416a.ea31 with seqno 11, queue 1/8 1/8, len 21 21
+1655464023505950 [INFO: TSCH      ] sending KA to f4ce.36f4.416a.ea31
+1655464023679436 [INFO: TSCH JamSense] CH25 :RSSI sample 11
+1655464024112862 [INFO: TSCH      ] packet sent to f4ce.36f4.416a.ea31, seqno 11, status 0, tx 2
+1655464024129753 [INFO: TSCH      ] KA sent to f4ce.36f4.416a.ea31, st 0-2
+1655464024238942 [INFO: TSCH JamSense] CH25 :RSSI sample 14
+1655464024810356 [INFO: TSCH      ] received from f4ce.36e8.500e.c592 with seqno 159
+1655464024827319 [WARN: 6LoWPAN   ] input: empty packet
+1655464024939042 [INFO: TSCH JamSense] CH25 :RSSI sample 20
+1655464026339313 [INFO: TSCH JamSense] CH25 :RSSI sample 20
+1655464026619150 [INFO: TSCH JamSense] CH25 :RSSI sample 20
+1655464028561980 [INFO: TSCH      ] TSCH: enqueue EB packet 35 16
+1655464028592857 [INFO: TSCH      ] packet sent to 0000.0000.0000.0000, seqno 213, status 0, tx 1
+1655464028720091 [INFO: TSCH JamSense] CH25 :RSSI sample 23
+1655464028858982 [INFO: TSCH JamSense] CH25 :RSSI sample 24
+1655464031379188 [INFO: TSCH JamSense] CH25 :RSSI sample 25
+1655464036559153 [INFO: TSCH JamSense] CH25 :RSSI sample 28
+1655464037118781 [INFO: TSCH JamSense] CH25 :RSSI sample 28
+1655464037272561 [INFO: TSCH      ] received from f4ce.36d5.eac9.a6a2 with seqno 33
+1655464037399496 [INFO: TSCH JamSense] CH25 :RSSI sample 37
+1655464037679641 [INFO: TSCH JamSense] CH25 :RSSI sample 37
+1655464039789422 [INFO: TSCH      ] received from f4ce.36e8.500e.c592 with seqno 160
+1655464039805858 [WARN: 6LoWPAN   ] input: empty packet
+1655464039919497 [INFO: TSCH JamSense] CH25 :RSSI sample 39
+1655464040339432 [INFO: TSCH JamSense] CH25 :RSSI sample 39
+1655464041319977 [INFO: TSCH JamSense] CH25 :RSSI sample 52
+1655464042252277 [INFO: TSCH      ] send packet to ffff.ffff.ffff.ffff with seqno 11, queue 1/8 1/8, len 14 94
+1655464042309410 [INFO: TSCH      ] packet sent to 0000.0000.0000.0000, seqno 214, status 0, tx 1
+1655464042439742 [INFO: TSCH JamSense] CH25 :RSSI sample 60
+1655464042579875 [INFO: TSCH JamSense] CH25 :RSSI sample 67
+1655464042721019 [INFO: TSCH JamSense] CH25 :RSSI sample 76
+1655464043536959 [INFO: TSCH      ] TSCH: enqueue EB packet 35 16
+1655464043568106 [INFO: TSCH      ] packet sent to 0000.0000.0000.0000, seqno 215, status 0, tx 1
+1655464043699736 [INFO: TSCH JamSense] CH25 :RSSI sample 76
+1655464044550130 [INFO: TSCH      ] received from f4ce.36f4.416a.ea31 with seqno 65535
+1655464044679236 [INFO: TSCH JamSense] CH25 :RSSI sample 84
+1655464044959282 [INFO: TSCH JamSense] CH25 :RSSI sample 93
+1655464045249432 [INFO: TSCH      ] received from f4ce.36d5.eac9.a6a2 with seqno 65535
+1655464045380639 [INFO: TSCH JamSense] CH25 :RSSI sample 93
+1655464049580769 [INFO: TSCH JamSense] CH25 :RSSI sample 103
+1655464051119698 [INFO: TSCH JamSense] CH25 :RSSI sample 108
+1655464053219575 [INFO: TSCH JamSense] CH25 :RSSI sample 132
+1655464055049478 [INFO: TSCH      ] received from f4ce.36e8.500e.c592 with seqno 161
+1655464055073724 [WARN: 6LoWPAN   ] input: empty packet
+1655464055179802 [INFO: TSCH JamSense] CH25 :RSSI sample 150
+1655464055739706 [INFO: TSCH JamSense] CH25 :RSSI sample 158
+1655464056287183 [INFO: TSCH      ] TSCH: enqueue EB packet 35 16
+1655464056308470 [INFO: TSCH      ] packet sent to 0000.0000.0000.0000, seqno 216, status 0, tx 1
+1655464056439624 [INFO: TSCH JamSense] CH25 :RSSI sample 208
+1655464060498771 [INFO: TSCH JamSense] CH25 :RSSI sample 210
+1655464064558643 [INFO: TSCH JamSense] CH25 :RSSI sample 219
+1655464065398788 [INFO: TSCH JamSense] CH25 :RSSI sample 227
+1655464066098797 [INFO: TSCH JamSense] CH25 :RSSI sample 242
+1655464066244473 [INFO: TSCH JamSense] CH25 :RSSI sample 248
+1655464066261784 [INFO: TSCH      ] received from f4ce.36e8.500e.c592 with seqno 162
+1655464066278843 [WARN: 6LoWPAN   ] input: empty packet
+1655464066295589 [INFO: TSCH JamSense] CH25 :RSSI sample 250
+1655464066945935 [INFO: TSCH JamSense] kmeans 0 clusters!
+1655464067499931 [INFO: TSCH JamSense] CH25 :RSSI sample 1
+1655464068073075 [INFO: TSCH      ] received from f4ce.36e8.500e.c592 with seqno 163
+1655464068090440 [INFO: TSCH      ] send packet to f4ce.36f4.416a.ea31 with seqno 12, queue 1/8 1/8, len 21 52
+1655464068199632 [INFO: TSCH JamSense] CH25 :RSSI sample 8
+1655464068339723 [INFO: TSCH JamSense] CH25 :RSSI sample 16
+1655464068479826 [INFO: TSCH JamSense] CH25 :RSSI sample 16
+1655464068989768 [INFO: TSCH      ] TSCH: enqueue EB packet 35 16
+1655464069047370 [INFO: TSCH      ] packet sent to 0000.0000.0000.0000, seqno 217, status 0, tx 1
+1655464069179473 [INFO: TSCH JamSense] CH25 :RSSI sample 22
+1655464069470063 [INFO: TSCH      ] packet sent to f4ce.36f4.416a.ea31, seqno 12, status 0, tx 3
+1655464069598789 [INFO: TSCH JamSense] CH25 :RSSI sample 22
+1655464071138833 [INFO: TSCH JamSense] CH25 :RSSI sample 56
+1655464073658874 [INFO: TSCH JamSense] CH25 :RSSI sample 56
+1655464074166063 [INFO: App       ] app generate packet seqnum=1 node_id=62029
+1655464074183485 [INFO: TSCH      ] send packet to f4ce.36f4.416a.ea31 with seqno 13, queue 1/8 1/8, len 21 43
+1655464074229336 [INFO: TSCH      ] packet sent to f4ce.36f4.416a.ea31, seqno 13, status 0, tx 1
+1655464074359276 [INFO: TSCH JamSense] CH25 :RSSI sample 75
+1655464077159352 [INFO: TSCH JamSense] CH25 :RSSI sample 86
+1655464077579327 [INFO: TSCH JamSense] CH25 :RSSI sample 86
+1655464079969621 [INFO: TSCH      ] received from f4ce.36e8.500e.c592 with seqno 164
+1655464079986122 [WARN: 6LoWPAN   ] input: empty packet
+1655464080098314 [INFO: TSCH JamSense] CH25 :RSSI sample 86
+1655464080378450 [INFO: TSCH JamSense] CH25 :RSSI sample 94
+1655464080798357 [INFO: TSCH JamSense] CH25 :RSSI sample 101
+1655464082338289 [INFO: TSCH JamSense] CH25 :RSSI sample 108
+1655464083878518 [INFO: TSCH JamSense] CH25 :RSSI sample 113
+1655464084473123 [INFO: TSCH      ] TSCH: enqueue EB packet 35 16
+1655464084588263 [INFO: TSCH      ] packet sent to 0000.0000.0000.0000, seqno 218, status 0, tx 1
+1655464084719476 [INFO: TSCH JamSense] CH25 :RSSI sample 120
+1655464086118409 [INFO: TSCH JamSense] CH25 :RSSI sample 134
+1655464087674224 [INFO: TSCH      ] received from f4ce.36e8.500e.c592 with seqno 165
+1655464087700493 [INFO: TSCH      ] send packet to f4ce.36f4.416a.ea31 with seqno 14, queue 1/8 1/8, len 21 52
+1655464087799226 [INFO: TSCH JamSense] CH25 :RSSI sample 144
+1655464087939294 [INFO: TSCH JamSense] CH25 :RSSI sample 148
+1655464088362759 [INFO: TSCH JamSense] CH25 :RSSI sample 158
+1655464088379450 [INFO: TSCH      ] packet sent to f4ce.36f4.416a.ea31, seqno 14, status 0, tx 3
+1655464088498588 [INFO: TSCH JamSense] CH25 :RSSI sample 175
+1655464088638747 [INFO: TSCH JamSense] CH25 :RSSI sample 192
+1655464088778769 [INFO: TSCH JamSense] CH25 :RSSI sample 200
+1655464090749478 [INFO: TSCH      ] received from f4ce.36c5.ea11.0b9b with seqno 65535
+1655464090878486 [INFO: TSCH JamSense] CH25 :RSSI sample 200
+1655464091302678 [INFO: TSCH      ] send packet to f4ce.36c5.ea11.0b9b with seqno 15, queue 1/8 1/8, len 21 100
+1655464091319559 [INFO: TSCH      ] packet sent to f4ce.36c5.ea11.0b9b, seqno 15, status 0, tx 1
+1655464091438649 [INFO: TSCH JamSense] CH25 :RSSI sample 205
+1655464092698756 [INFO: TSCH JamSense] CH25 :RSSI sample 217
+1655464094166429 [INFO: App       ] app generate packet seqnum=2 node_id=62029
+1655464094183090 [INFO: TSCH      ] send packet to f4ce.36f4.416a.ea31 with seqno 16, queue 1/8 1/8, len 21 43
+1655464094248925 [INFO: TSCH      ] packet sent to f4ce.36f4.416a.ea31, seqno 16, status 0, tx 1
+1655464094379161 [INFO: TSCH JamSense] CH25 :RSSI sample 221
+1655464095219420 [INFO: TSCH JamSense] CH25 :RSSI sample 230
+1655464096338098 [INFO: TSCH JamSense] CH25 :RSSI sample 242
+1655464096618434 [INFO: TSCH JamSense] CH25 :RSSI sample 244
+1655464096768470 [INFO: TSCH      ] received from f4ce.36d5.eac9.a6a2 with seqno 65535
+1655464096898315 [INFO: TSCH JamSense] CH25 :RSSI sample 247
+1655464097178670 [INFO: TSCH JamSense] CH25 :RSSI sample 247
+1655464099712546 [INFO: TSCH      ] received from f4ce.36f4.416a.ea31 with seqno 65535
+1655464099729323 [INFO: TSCH JamSense] CH25 :RSSI sample 250
+1655464099850592 [INFO: TSCH      ] received from f4ce.36c7.728d.0d1b with seqno 65535
+1655464099867713 [INFO: TSCH JamSense] kmeans 0 clusters!
+1655464100302230 [INFO: TSCH      ] TSCH: enqueue EB packet 35 16
+1655464100408835 [INFO: TSCH      ] packet sent to 0000.0000.0000.0000, seqno 219, status 0, tx 1
+1655464100425599 [INFO: TSCH JamSense] channel changed to 26, reset specksense!
+1655464100539015 [INFO: TSCH JamSense] CH26 :RSSI sample 60
+1655464101524465 [INFO: TSCH JamSense] CH26 :RSSI sample 97
+1655464102094750 [INFO: TSCH      ] received from f4ce.36e8.500e.c592 with seqno 65535
+1655464102224275 [INFO: TSCH JamSense] CH26 :RSSI sample 158
+1655464103000771 [INFO: TSCH      ] send packet to ffff.ffff.ffff.ffff with seqno 16, queue 1/8 1/8, len 14 94
+1655464103433185 [INFO: TSCH      ] packet sent to 0000.0000.0000.0000, seqno 220, status 0, tx 1
+1655464103452401 [INFO: TSCH JamSense] CH26 :RSSI sample 179
+1655464106139901 [INFO: TSCH JamSense] CH26 :RSSI sample 221
+1655464106186455 [INFO: TSCH JamSense] CH26 :RSSI sample 250
+1655464107269179 [INFO: TSCH JamSense] kmeans 0 clusters!
+1655464107694975 [INFO: TSCH      ] received from f4ce.36e8.500e.c592 with seqno 167
+1655464107712015 [INFO: TSCH      ] send packet to f4ce.36f4.416a.ea31 with seqno 17, queue 1/8 1/8, len 21 52
+1655464107822399 [INFO: TSCH JamSense] CH26 :RSSI sample 15
+1655464107839025 [INFO: TSCH      ] packet sent to f4ce.36f4.416a.ea31, seqno 17, status 0, tx 1
+1655464107958591 [INFO: TSCH JamSense] CH26 :RSSI sample 105
+1655464108378578 [INFO: TSCH JamSense] CH26 :RSSI sample 166
+1655464108518699 [INFO: TSCH JamSense] CH26 :RSSI sample 230
+1655464109087149 [INFO: TSCH JamSense] CH26 :RSSI sample 250
+1655464109506065 [INFO: TSCH JamSense] kmeans 0 clusters!
+1655464110344526 [INFO: TSCH JamSense] channel changed to 20, reset specksense!
+1655464110478159 [INFO: TSCH JamSense] CH20 :RSSI sample 4
+1655464111738422 [INFO: TSCH JamSense] CH20 :RSSI sample 16
+1655464113574380 [INFO: TSCH      ] TSCH: enqueue EB packet 35 16
+1655464113706972 [INFO: TSCH      ] packet sent to 0000.0000.0000.0000, seqno 221, status 0, tx 1
+1655464113838519 [INFO: TSCH JamSense] CH20 :RSSI sample 19
+1655464114173037 [INFO: App       ] app generate packet seqnum=3 node_id=62029
+1655464114189890 [INFO: TSCH      ] send packet to f4ce.36f4.416a.ea31 with seqno 18, queue 1/8 1/8, len 21 43
+1655464114268536 [INFO: TSCH      ] packet sent to f4ce.36f4.416a.ea31, seqno 18, status 0, tx 1
+1655464114401024 [INFO: TSCH JamSense] CH20 :RSSI sample 179
+1655464114678913 [INFO: TSCH JamSense] CH20 :RSSI sample 188
+1655464117198713 [INFO: TSCH JamSense] CH20 :RSSI sample 191
+1655464120979114 [INFO: TSCH JamSense] CH20 :RSSI sample 193
+1655464122799132 [INFO: TSCH JamSense] CH20 :RSSI sample 200
+1655464123078050 [INFO: TSCH JamSense] CH20 :RSSI sample 206
+1655464123497647 [INFO: TSCH JamSense] CH20 :RSSI sample 206
+1655464123741845 [INFO: TSCH JamSense] CH20 :RSSI sample 250
+1655464125885546 [INFO: TSCH JamSense] kmeans 0 clusters!
+1655464126158042 [INFO: TSCH JamSense] CH20 :RSSI sample 23
+1655464127712503 [INFO: TSCH      ] received from f4ce.36e8.500e.c592 with seqno 168
+1655464127729213 [INFO: TSCH      ] send packet to f4ce.36f4.416a.ea31 with seqno 19, queue 1/8 1/8, len 21 52
+1655464127842878 [INFO: TSCH JamSense] CH20 :RSSI sample 32
+1655464127868850 [INFO: TSCH      ] packet sent to f4ce.36f4.416a.ea31, seqno 19, status 0, tx 1
+1655464127978822 [INFO: TSCH JamSense] CH20 :RSSI sample 36
+1655464128398690 [INFO: TSCH JamSense] CH20 :RSSI sample 37
+1655464128879416 [INFO: TSCH      ] TSCH: enqueue EB packet 35 16
+1655464128966708 [INFO: TSCH      ] packet sent to 0000.0000.0000.0000, seqno 222, status 0, tx 1
+1655464129098560 [INFO: TSCH JamSense] CH20 :RSSI sample 48
+1655464134180517 [INFO: App       ] app generate packet seqnum=4 node_id=62029
+1655464134197396 [INFO: TSCH      ] send packet to f4ce.36f4.416a.ea31 with seqno 20, queue 1/8 1/8, len 21 43
+1655464134288371 [INFO: TSCH      ] packet sent to f4ce.36f4.416a.ea31, seqno 20, status 0, tx 1
+1655464134418558 [INFO: TSCH JamSense] CH20 :RSSI sample 55
+1655464135258764 [INFO: TSCH JamSense] CH20 :RSSI sample 63
+1655464137218500 [INFO: TSCH JamSense] CH20 :RSSI sample 63
+1655464137358653 [INFO: TSCH JamSense] CH20 :RSSI sample 65
+1655464137638556 [INFO: TSCH JamSense] CH20 :RSSI sample 69
+1655464137918558 [INFO: TSCH JamSense] CH20 :RSSI sample 78
+1655464138198588 [INFO: TSCH JamSense] CH20 :RSSI sample 92
+1655464143938558 [INFO: TSCH JamSense] CH20 :RSSI sample 104
+1655464143963638 [INFO: TSCH      ] TSCH: enqueue EB packet 35 16
+1655464144086614 [INFO: TSCH      ] packet sent to 0000.0000.0000.0000, seqno 223, status 0, tx 1
+1655464144218319 [INFO: TSCH JamSense] CH20 :RSSI sample 105
+1655464146038326 [INFO: TSCH JamSense] CH20 :RSSI sample 190
+1655464146178348 [INFO: TSCH JamSense] CH20 :RSSI sample 196
+1655464147593091 [INFO: TSCH      ] received from f4ce.36e8.500e.c592 with seqno 169
+1655464147609730 [INFO: TSCH      ] send packet to f4ce.36f4.416a.ea31 with seqno 21, queue 1/8 1/8, len 21 52
+1655464147717693 [INFO: TSCH JamSense] CH20 :RSSI sample 222
+1655464147829234 [INFO: TSCH JamSense] CH20 :RSSI sample 250
+1655464148010290 [INFO: TSCH      ] packet sent to f4ce.36f4.416a.ea31, seqno 21, status 0, tx 2
+1655464148026935 [INFO: TSCH JamSense] kmeans 0 clusters!
+1655464148284719 [INFO: TSCH JamSense] channel changed to 26, reset specksense!
+1655464148417187 [INFO: TSCH JamSense] CH26 :RSSI sample 72
+1655464148837402 [INFO: TSCH JamSense] CH26 :RSSI sample 136
+1655464149397561 [INFO: TSCH JamSense] CH26 :RSSI sample 181
+1655464150657538 [INFO: TSCH JamSense] CH26 :RSSI sample 235
+1655464152018758 [INFO: TSCH JamSense] CH26 :RSSI sample 250
+1655464152626245 [INFO: TSCH JamSense] kmeans 0 clusters!
+1655464154187336 [INFO: App       ] app generate packet seqnum=5 node_id=62029
+1655464154204237 [INFO: TSCH      ] send packet to f4ce.36f4.416a.ea31 with seqno 22, queue 1/8 1/8, len 21 43
+1655464154309288 [INFO: TSCH      ] packet sent to f4ce.36f4.416a.ea31, seqno 22, status 0, tx 1
+1655464154438088 [INFO: TSCH JamSense] CH26 :RSSI sample 100
+1655464157097520 [INFO: TSCH JamSense] CH26 :RSSI sample 151
+1655464157238343 [INFO: TSCH JamSense] CH26 :RSSI sample 213
+1655464158205599 [INFO: TSCH      ] TSCH: enqueue EB packet 35 16
+1655464158226643 [INFO: TSCH      ] packet sent to 0000.0000.0000.0000, seqno 224, status 0, tx 1
+1655464158295260 [INFO: TSCH JamSense] CH26 :RSSI sample 250
+1655464162286726 [INFO: TSCH JamSense] kmeans 0 clusters!
+1655464167613091 [INFO: TSCH      ] received from f4ce.36e8.500e.c592 with seqno 170
+1655464167637573 [INFO: TSCH      ] send packet to f4ce.36f4.416a.ea31 with seqno 23, queue 1/8 1/8, len 21 52
+1655464167748280 [INFO: TSCH      ] packet sent to f4ce.36f4.416a.ea31, seqno 23, status 0, tx 1
+1655464173081177 [INFO: TSCH      ] TSCH: enqueue EB packet 35 16
+1655464173205776 [INFO: TSCH      ] packet sent to 0000.0000.0000.0000, seqno 225, status 0, tx 1
+1655464174194072 [INFO: App       ] app generate packet seqnum=6 node_id=62029
+1655464174211207 [INFO: TSCH      ] send packet to f4ce.36f4.416a.ea31 with seqno 24, queue 1/8 1/8, len 21 43
+1655464174328610 [INFO: TSCH      ] packet sent to f4ce.36f4.416a.ea31, seqno 24, status 0, tx 1
+1655464177583918 [INFO: TSCH      ] send packet to ffff.ffff.ffff.ffff with seqno 24, queue 1/8 1/8, len 14 94
+1655464177688275 [INFO: TSCH      ] packet sent to 0000.0000.0000.0000, seqno 226, status 0, tx 1
+1655464179087198 [INFO: TSCH      ] received from f4ce.36e8.500e.c592 with seqno 65535
+1655464180765742 [INFO: TSCH      ] send packet to f4ce.36c5.ea11.0b9b with seqno 25, queue 1/8 1/8, len 21 100
+1655464180910241 [INFO: TSCH      ] packet sent to f4ce.36c5.ea11.0b9b, seqno 25, status 0, tx 1
+1655464187632775 [INFO: TSCH      ] received from f4ce.36e8.500e.c592 with seqno 172
+1655464187649963 [INFO: TSCH      ] send packet to f4ce.36f4.416a.ea31 with seqno 26, queue 1/8 1/8, len 21 52
+1655464187767774 [INFO: TSCH      ] packet sent to f4ce.36f4.416a.ea31, seqno 26, status 0, tx 1
+1655464188680851 [INFO: TSCH      ] TSCH: enqueue EB packet 35 16
+1655464188745381 [INFO: TSCH      ] packet sent to 0000.0000.0000.0000, seqno 227, status 0, tx 1
+1655464194204260 [INFO: App       ] app generate packet seqnum=7 node_id=62029
+1655464194221347 [INFO: TSCH      ] send packet to f4ce.36f4.416a.ea31 with seqno 27, queue 1/8 1/8, len 21 43
+1655464194238187 [INFO: TSCH      ] packet sent to f4ce.36f4.416a.ea31, seqno 27, status 0, tx 1
+1655464194486671 [INFO: TSCH      ] received from f4ce.36f4.416a.ea31 with seqno 65535
+1655464204187169 [INFO: TSCH      ] TSCH: enqueue EB packet 35 16
+1655464204285179 [INFO: TSCH      ] packet sent to 0000.0000.0000.0000, seqno 228, status 0, tx 1
+1655464207651082 [INFO: TSCH      ] received from f4ce.36e8.500e.c592 with seqno 173
+1655464207667670 [INFO: TSCH      ] send packet to f4ce.36f4.416a.ea31 with seqno 28, queue 1/8 1/8, len 21 52
+1655464207788342 [INFO: TSCH      ] packet sent to f4ce.36f4.416a.ea31, seqno 28, status 0, tx 1
+1655464208347709 [INFO: TSCH      ] received from f4ce.36d5.eac9.a6a2 with seqno 65535
+1655464214207046 [INFO: App       ] app generate packet seqnum=8 node_id=62029
+1655464214228952 [INFO: TSCH      ] send packet to f4ce.36f4.416a.ea31 with seqno 29, queue 1/8 1/8, len 21 43
+1655464214246732 [INFO: TSCH      ] packet sent to f4ce.36f4.416a.ea31, seqno 29, status 0, tx 1
+1655464217501118 [INFO: TSCH      ] TSCH: enqueue EB packet 35 16
+1655464217584553 [INFO: TSCH      ] packet sent to 0000.0000.0000.0000, seqno 229, status 0, tx 1
+1655464227670536 [INFO: TSCH      ] received from f4ce.36e8.500e.c592 with seqno 174
+1655464227687479 [INFO: TSCH      ] send packet to f4ce.36f4.416a.ea31 with seqno 30, queue 1/8 1/8, len 21 52
+1655464227936520 [INFO: TSCH JamSense] CH26 :RSSI sample 20
+1655464228355606 [INFO: TSCH JamSense] CH26 :RSSI sample 78
+1655464228915498 [INFO: TSCH JamSense] CH26 :RSSI sample 126
+1655464229055790 [INFO: TSCH JamSense] CH26 :RSSI sample 148
+1655464229475694 [INFO: TSCH JamSense] CH26 :RSSI sample 195

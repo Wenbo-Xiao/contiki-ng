@@ -18,7 +18,7 @@ CFLAGS+=-DQUICK_PROACTIVE=1  #classify constant and random jammers as PROACTIVE 
 
 
 #Threholds
-CFLAGS+=-DINTERFERENCE_POWER_LEVEL_THRESHOLD=13    #need to be fine-tune in different environment (13 in testbed, 16 in tabletest)
+CFLAGS+=-DINTERFERENCE_POWER_LEVEL_THRESHOLD=14    #need to be fine-tune in different environment (eg 14 to test with less interference, 16 in complex invironment)
 CFLAGS+=-DINTERFERENCE_DURATION_PROACTIVE=900
 CFLAGS+=-DINTERFERENCE_DURATION_MID_MIN=400	#Decrease the number to cover wider area!
 CFLAGS+=-DINTERFERENCE_DURATION_MID_MAX=900
