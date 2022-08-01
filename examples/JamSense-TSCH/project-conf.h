@@ -12,7 +12,7 @@
 
 extern bool jammer_node(void);
 #define SELECT_MAC_FUNCTION jammer_node
-//#define TSCH_CONF_DEFAULT_HOPPING_SEQUENCE	   TSCH_HOPPING_SEQUENCE_16_16
+#define TSCH_CONF_DEFAULT_HOPPING_SEQUENCE	   TSCH_HOPPING_SEQUENCE_4_4
 
 /* Enable printing of packet counters */
 #define LINK_STATS_CONF_PACKET_COUNTERS          1

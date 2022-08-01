@@ -152,13 +152,13 @@ void rssi_sampler(int sample_amount, int channel, rtimer_clock_t rssi_stop_time)
 	// sample_st = RTIMER_NOW();
 	rle_ptr = 0;
 
-	if(channel != pre_measurement_channel)
-		{
-			sample_cnt = 0;
-			reset_kmeans();
-			LOG_INFO("channel changed to %d, reset specksense!\n",channel);
+	 if(channel != pre_measurement_channel)
+	 	{
+	// 		sample_cnt = 0;
+	// 		reset_kmeans();
+	// 		LOG_INFO("channel changed to %d, reset specksense!\n",channel);
 		}
-	pre_measurement_channel = channel;
+	// pre_measurement_channel = channel;
 
 	//int times = 0;
 #if TSCH_WITH_JAMSENSE == 1
@@ -538,10 +538,11 @@ int specksense_process()
 	else
 	{
 #if TSCH_WITH_JAMSENSE == 1
-		int channel_rssi = specksense_channel_peek();
-		if (channel_rssi != 0 && check_jammer_status(channel_rssi))
+		 int channel_rssi = specksense_channel_peek();
+		 if (channel_rssi != 0 && check_jammer_status(channel_rssi)){;}
+		if (channel_rssi != 0)
 		{
-			rssi_sampler(SAMPLE_AMOUNT,channel_rssi,rssi_stop_time);
+			rssi_sampler(SAMPLE_AMOUNT,tsch_current_channel,rssi_stop_time);
 		}
 #else
 		rssi_stop_time = RTIMER_NOW() + 1000000;
