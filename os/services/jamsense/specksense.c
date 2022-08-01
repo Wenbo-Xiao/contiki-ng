@@ -543,6 +543,12 @@ int specksense_process()
 		{
 			rssi_sampler(SAMPLE_AMOUNT,channel_rssi,rssi_stop_time);
 		}
+
+		/*Doing Rssi when target channel is curent tsch channel*/
+		// if (channel_rssi == tsch_current_channel && check_jammer_status(channel_rssi))
+		// {
+		// 	rssi_sampler(SAMPLE_AMOUNT,channel_rssi,rssi_stop_time);
+		// }
 #else
 		rssi_stop_time = RTIMER_NOW() + 1000000;
 		specksense_channel_add(26);
